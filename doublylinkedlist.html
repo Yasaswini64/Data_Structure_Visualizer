@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Doubly Linked List Visualizer</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* ================= BODY ================= */
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: #f6f9fc;
+  color: #1f2937;
+}
+
+/* ================= BACK BUTTON ================= */
+.back-btn {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  text-decoration: none;
+  border: none;
+  background: none;
+  font-size: 34px;
+  padding: 8px 14px;
+  font-weight: 700;
+  color: #2563eb;
+  cursor: pointer;
+  border-radius: 50%;
+  z-index: 1000;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.back-btn:hover {
+  transform: scale(1.15);
+  background: rgba(37, 99, 235, 0.1);
+}
+
+/* ================= HEADER ================= */
+.header-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.header-bar h1 {
+  margin: 0;
+  font-size: 36px;
+  font-weight: 700;
+  color: #1d4ed8;
+}
+
+/* ================= MAIN LAYOUT ================= */
+.main {
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 28px;
+}
+
+/* ================= CONTROL PANEL ================= */
+#panel {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+#panel h3 {
+  margin-top: 0;
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+input, button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+}
+
+input {
+  outline: none;
+}
+
+button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+#status {
+  margin-top: 14px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ================= VISUALIZATION CARD ================= */
+.visual-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.visual-card h3 {
+  margin-top: 0;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+/* ================= VISUALIZATION ================= */
+#visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 220px;
+  padding-left: 40px;
+}
+
+/* HEAD */
+#head {
+  position: absolute;
+  top: 10px;
+  left: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#head span {
+  background: #16a34a;
+  color: white;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+#head-arrow {
+  width: 18px;
+  height: 18px;
+  border-left: 3px solid #16a34a;
+  border-bottom: 3px solid #16a34a;
+  transform: rotate(-45deg);
+  margin-top: 4px;
+}
+
+/* NODE */
+.node {
+  display: flex;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-right: 14px;
+  background: #3b82f6;
+  box-shadow: 0 6px 18px rgba(59,130,246,0.35);
+}
+
+/* PREV | DATA | NEXT */
+.prev, .data, .next {
+  width: 70px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  color: white;
+}
+
+.data {
+  font-size: 20px;
+  border-left: 2px solid rgba(255,255,255,0.4);
+  border-right: 2px solid rgba(255,255,255,0.4);
+}
+
+/* ARROW */
+.arrow {
+  font-size: 36px;
+  margin: 0 16px;
+  color: #94a3b8;
+}
+</style>
+</head>
+
+<body>
+
+<!-- BACK BUTTON -->
+<a class="back-btn" href="linkedlist.html">←</a>
+
+<!-- HEADER -->
+<div class="header-bar">
+  <h1>Doubly Linked List</h1>
+</div>
+
+<div class="main">
+
+  <!-- CONTROLS -->
+  <div id="panel">
+    <h3>Controls</h3>
+    <input id="valueInput" placeholder="Enter value" />
+    <button onclick="insert()">Insert</button>
+    <button onclick="deleteNode()">Delete</button>
+    <button onclick="search()">Search</button>
+    <button onclick="resetList()">Reset</button>
+    <div id="status">Linked List is Empty</div>
+  </div>
+
+  <!-- VISUALIZATION -->
+  <div class="visual-card">
+    <h3>Visualization</h3>
+    <div id="visual"></div>
+  </div>
+
+</div>
+
+<script>
+let list = [];
+
+function render() {
+  const visual = document.getElementById("visual");
+  visual.innerHTML = "";
+
+  if (list.length === 0) {
+    document.getElementById("status").innerText = "Linked List is Empty";
+    return;
+  }
+
+  const head = document.createElement("div");
+  head.id = "head";
+  head.innerHTML = `
+    <span>HEAD</span>
+    <div id="head-arrow"></div>
+  `;
+  visual.appendChild(head);
+
+  list.forEach((val, i) => {
+    const node = document.createElement("div");
+    node.className = "node";
+
+    node.innerHTML = `
+      <div class="prev">${i === 0 ? "NULL" : "PREV"}</div>
+      <div class="data">${val}</div>
+      <div class="next">${i === list.length - 1 ? "NULL" : "NEXT"}</div>
+    `;
+    visual.appendChild(node);
+
+    if (i !== list.length - 1) {
+      const arrow = document.createElement("div");
+      arrow.className = "arrow";
+      arrow.innerHTML = "↔";
+      visual.appendChild(arrow);
+    }
+  });
+}
+
+function insert() {
+  const val = document.getElementById("valueInput").value;
+  if (!val) return;
+  list.push(val);
+  document.getElementById("status").innerText = `Inserted ${val}`;
+  render();
+}
+
+function deleteNode() {
+  const val = document.getElementById("valueInput").value;
+  if (!val) return;
+
+  const index = list.indexOf(val);
+  if (index === -1) {
+    document.getElementById("status").innerText = `${val} not found`;
+    return;
+  }
+
+  list.splice(index, 1);
+  document.getElementById("status").innerText = `Deleted ${val}`;
+  render();
+}
+
+function search() {
+  const val = document.getElementById("valueInput").value;
+  if (!val) return;
+
+  const index = list.indexOf(val);
+  document.getElementById("status").innerText =
+    index === -1 ? `${val} not found` : `${val} found at position ${index}`;
+}
+
+function resetList() {
+  list = [];
+  render();
+}
+
+render();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>3D Insertion Sort (Bars with Values)</title>
+
+<style>
+body {
+  margin: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at top, #1a1a1a, #000);
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* ===== BACK BUTTON ===== */
+.back-btn {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  font-size: 32px;
+  color: #00eaff;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 50%;
+  z-index: 100;
+}
+
+.back-btn:hover {
+  background: rgba(0, 234, 255, 0.15);
+}
+
+/* ===== HEADER ===== */
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 90px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+header .title {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #00eaff;
+}
+
+header .subtitle {
+  font-size: 14px;
+  color: #b5f7ff;
+  margin-top: 4px;
+}
+
+/* ===== CONTROL PANEL ===== */
+#panel {
+  position: fixed;
+  top: 120px;
+  left: 20px;
+  width: 270px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border-radius: 14px;
+  padding: 16px;
+  color: #fff;
+  box-shadow: 0 0 30px rgba(0, 234, 255, 0.15);
+  z-index: 40;
+}
+
+label {
+  font-size: 13px;
+}
+
+input, button {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+}
+
+input {
+  background: rgba(0, 0, 0, 0.6);
+  color: #00eaff;
+}
+
+button {
+  cursor: pointer;
+  font-weight: bold;
+  background: linear-gradient(135deg, #00eaff, #0077ff);
+  color: #000;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+#status {
+  margin-top: 12px;
+  padding: 8px;
+  text-align: center;
+  border-radius: 8px;
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.5);
+  color: #00eaff;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Back Button -->
+<a href="HomePage.html" class="back-btn">←</a>
+
+<!-- Header -->
+<header>
+  <div class="title">Insertion Sort</div>
+  <div class="subtitle">Visualize insertion sort using bars</div>
+</header>
+
+<!-- Control Panel -->
+<div id="panel">
+  <label>Array (comma separated)</label>
+  <input id="arrayInput" value="5,3,8,4,2,7" />
+
+  <button onclick="generate()">Generate</button>
+  <button onclick="startInsertionSort()">▶ Start Insertion Sort</button>
+  <button onclick="pauseSort()">⏸ Pause</button>
+  <button onclick="resetSort()">🔄 Reset</button>
+
+  <label>Speed</label>
+  <input id="speed" type="range" min="300" max="2000" value="1000" />
+
+  <div id="status">Status: Ready</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+
+<script>
+/* ---------- SCENE ---------- */
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x111111);
+
+/* ---------- CAMERA ---------- */
+const camera = new THREE.PerspectiveCamera(
+  60,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+camera.position.set(0, 10, 18);
+camera.lookAt(0, 5, 0);
+
+/* ---------- RENDERER ---------- */
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+/* keep canvas behind UI */
+renderer.domElement.style.position = "fixed";
+renderer.domElement.style.top = "0";
+renderer.domElement.style.left = "0";
+renderer.domElement.style.zIndex = "1";
+
+document.body.appendChild(renderer.domElement);
+
+/* ---------- LIGHT ---------- */
+scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(5, 10, 5);
+scene.add(light);
+
+/* ---------- VARIABLES ---------- */
+let array = [];
+let bars = [];
+let i = 1;
+let j = 0;
+let keyBar = null;
+let keyValue = null;
+let timer = null;
+
+/* ---------- GROUP ---------- */
+const group = new THREE.Group();
+scene.add(group);
+
+/* ---------- STATUS ---------- */
+function updateStatus(msg, color = "#00eaff") {
+  const s = document.getElementById("status");
+  s.innerText = msg;
+  s.style.color = color;
+}
+
+/* ---------- TEXT SPRITE ---------- */
+function createTextSprite(text) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 256;
+  canvas.height = 128;
+
+  const ctx = canvas.getContext("2d");
+  ctx.font = "bold 64px Arial";
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  const sprite = new THREE.Sprite(
+    new THREE.SpriteMaterial({ map: texture })
+  );
+  sprite.scale.set(2.2, 1.1, 1);
+  return sprite;
+}
+
+/* ---------- CREATE BARS ---------- */
+function createBars() {
+  group.clear();
+  bars = [];
+  i = 1;
+  j = 0;
+  keyBar = null;
+
+  const spacing = 1.5;
+  const maxVal = Math.max(...array);
+
+  array.forEach((value, index) => {
+    const height = (value / maxVal) * 8 + 0.5;
+
+    const bar = new THREE.Mesh(
+      new THREE.BoxGeometry(1, height, 1),
+      new THREE.MeshStandardMaterial({ color: 0x0077ff })
+    );
+
+    bar.position.x =
+      index * spacing - ((array.length - 1) * spacing) / 2;
+    bar.position.y = height / 2;
+
+    const label = createTextSprite(value.toString());
+    label.position.set(bar.position.x, -1.1, 0);
+
+    bar.userData = { value, label };
+
+    group.add(bar);
+    group.add(label);
+    bars.push(bar);
+  });
+}
+
+/* ---------- GENERATE ---------- */
+window.generate = function () {
+  pauseSort();
+
+  array = document
+    .getElementById("arrayInput")
+    .value.split(",")
+    .map(x => Number(x.trim()))
+    .filter(x => !isNaN(x));
+
+  if (!array.length) return alert("Enter valid array");
+
+  createBars();
+  updateStatus("Status: Ready");
+};
+
+/* ---------- INSERTION SORT STEP ---------- */
+function stepInsertionSort() {
+  updateStatus("Sorting...", "#ffff00");
+
+  bars.forEach((bar, idx) => {
+    bar.material.color.set(idx < i ? 0x00ff00 : 0x0077ff);
+  });
+
+  if (i >= bars.length) {
+    updateStatus("Sorting Completed", "#00ff00");
+    pauseSort();
+    return;
+  }
+
+  if (!keyBar) {
+    keyBar = bars[i];
+    keyValue = array[i];
+    j = i - 1;
+    keyBar.material.color.set(0xff00ff);
+    return;
+  }
+
+  if (j >= 0 && array[j] > keyValue) {
+    array[j + 1] = array[j];
+    bars[j + 1] = bars[j];
+
+    bars[j + 1].position.x += 1.5;
+    bars[j + 1].userData.label.position.x += 1.5;
+
+    j--;
+  } else {
+    array[j + 1] = keyValue;
+    bars[j + 1] = keyBar;
+
+    const x =
+      (j + 1) * 1.5 - ((array.length - 1) * 1.5) / 2;
+    keyBar.position.x = x;
+    keyBar.userData.label.position.x = x;
+
+    keyBar = null;
+    i++;
+  }
+}
+
+/* ---------- CONTROLS ---------- */
+window.startInsertionSort = function () {
+  if (timer || !bars.length) return;
+  timer = setInterval(
+    stepInsertionSort,
+    document.getElementById("speed").value
+  );
+};
+
+window.pauseSort = function () {
+  clearInterval(timer);
+  timer = null;
+};
+
+window.resetSort = function () {
+  pauseSort();
+  createBars();
+  updateStatus("Status: Ready");
+};
+
+/* ---------- ANIMATE ---------- */
+function animate() {
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+}
+animate();
+
+/* ---------- RESIZE ---------- */
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+/* ---------- INIT ---------- */
+generate();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Circular Linked List Visualizer</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: #f6f9fc;
+  color: #1f2937;
+}
+
+/* ================= BACK BUTTON ================= */
+.back-btn {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  text-decoration: none;
+  font-size: 34px;
+  padding: 8px 14px;
+  font-weight: 700;
+  color: #2563eb;
+  border-radius: 50%;
+  z-index: 1000;
+}
+
+.back-btn:hover {
+  background: rgba(37,99,235,0.1);
+}
+
+/* ================= HEADER ================= */
+.header-bar {
+  height: 80px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-bar h1 {
+  margin: 0;
+  font-size: 36px;
+  font-weight: 700;
+  color: #1d4ed8;
+}
+
+/* ================= MAIN LAYOUT ================= */
+.main {
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 28px;
+}
+
+/* ================= CONTROLS ================= */
+#panel {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 8px 24px rgba(15,23,42,0.08);
+}
+
+#panel h3 {
+  margin-top: 0;
+  font-size: 20px;
+}
+
+input, button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+}
+
+button {
+  background: #2563eb;
+  color: white;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+#status {
+  margin-top: 14px;
+  padding: 10px;
+  background: #eff6ff;
+  border-radius: 8px;
+  color: #1d4ed8;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ================= VISUALIZATION ================= */
+.visual-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(15,23,42,0.08);
+}
+
+.visual-card h3 {
+  margin-top: 0;
+}
+
+#visual {
+  position: relative;
+  height: 420px;
+}
+
+/* CIRCLE */
+.circle {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border: 3px solid #3b82f6;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* NODE */
+.node {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(59,130,246,0.4);
+}
+
+/* HEAD LABEL */
+.head-label {
+  position: absolute;
+  top: -26px;
+  background: #16a34a;
+  color: white;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+</style>
+</head>
+
+<body>
+
+<a class="back-btn" href="linkedlist.html">←</a>
+
+<div class="header-bar">
+  <h1>Circular Linked List</h1>
+</div>
+
+<div class="main">
+
+  <!-- CONTROLS -->
+  <div id="panel">
+    <h3>Controls</h3>
+    <input id="valueInput" placeholder="Enter value" />
+    <button onclick="insert()">Insert</button>
+    <button onclick="deleteNode()">Delete</button>
+    <button onclick="search()">Search</button>
+    <button onclick="resetList()">Reset</button>
+    <div id="status">Linked List is Empty</div>
+  </div>
+
+  <!-- VISUALIZATION -->
+  <div class="visual-card">
+    <h3>Visualization</h3>
+    <div id="visual"></div>
+  </div>
+
+</div>
+
+<script>
+let list = [];
+
+function render() {
+  const visual = document.getElementById("visual");
+  visual.innerHTML = "";
+
+  if (list.length === 0) {
+    document.getElementById("status").innerText = "Linked List is Empty";
+    return;
+  }
+
+  // Draw circle
+  const circle = document.createElement("div");
+  circle.className = "circle";
+  visual.appendChild(circle);
+
+  const centerX = visual.clientWidth / 2;
+  const centerY = visual.clientHeight / 2;
+  const radius = 150;
+
+  list.forEach((val, i) => {
+    const angle = (2 * Math.PI / list.length) * i - Math.PI / 2;
+    const x = centerX + radius * Math.cos(angle) - 35;
+    const y = centerY + radius * Math.sin(angle) - 35;
+
+    const node = document.createElement("div");
+    node.className = "node";
+    node.style.left = `${x}px`;
+    node.style.top = `${y}px`;
+    node.innerText = val;
+
+    // HEAD marker
+    if (i === 0) {
+      const head = document.createElement("div");
+      head.className = "head-label";
+      head.innerText = "HEAD";
+      node.appendChild(head);
+    }
+
+    visual.appendChild(node);
+  });
+}
+
+function insert() {
+  const val = document.getElementById("valueInput").value;
+  if (!val) return;
+  list.push(val);
+  document.getElementById("status").innerText = `Inserted ${val}`;
+  render();
+}
+
+function deleteNode() {
+  const val = document.getElementById("valueInput").value;
+  if (!val) return;
+
+  const index = list.indexOf(val);
+  if (index === -1) {
+    document.getElementById("status").innerText = `${val} not found`;
+    return;
+  }
+
+  list.splice(index, 1);
+  document.getElementById("status").innerText = `Deleted ${val}`;
+  render();
+}
+
+function search() {
+  const val = document.getElementById("valueInput").value;
+  if (!val) return;
+
+  const index = list.indexOf(val);
+  document.getElementById("status").innerText =
+    index === -1 ? `${val} not found` : `${val} found at position ${index}`;
+}
+
+function resetList() {
+  list = [];
+  render();
+}
+
+render();
+</script>
+
+</body>
+</html>

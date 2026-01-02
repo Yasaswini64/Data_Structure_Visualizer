@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Binary Search Tree Visualization</title>
+
+<style>
+body {
+  margin: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at top, #1a1a1a, #000);
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* ===== BACK BUTTON ===== */
+.back-btn {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  font-size: 34px;
+  color: #00eaff;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 50%;
+  z-index: 100;
+}
+.back-btn:hover {
+  background: rgba(0, 234, 255, 0.15);
+}
+
+/* ===== HEADER ===== */
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 90px;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+header .title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #00eaff;
+}
+header .subtitle {
+  font-size: 14px;
+  color: #b5f7ff;
+  margin-top: 4px;
+}
+
+/* ===== CONTROL PANEL ===== */
+#panel {
+  position: fixed;
+  top: 120px;
+  left: 20px;
+  width: 280px;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  border-radius: 14px;
+  padding: 16px;
+  color: #fff;
+  z-index: 40;
+  box-shadow: 0 0 30px rgba(0,234,255,0.15);
+}
+
+input, button {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+}
+input {
+  background: rgba(0,0,0,0.6);
+  color: #00eaff;
+}
+button {
+  font-weight: bold;
+  background: linear-gradient(135deg, #00eaff, #0077ff);
+  cursor: pointer;
+}
+button:hover { opacity: 0.9; }
+
+#status {
+  margin-top: 12px;
+  padding: 8px;
+  text-align: center;
+  font-weight: bold;
+  background: rgba(0,0,0,0.5);
+  color: #00eaff;
+}
+
+/* ===== PSEUDO CODE (LEFT SIDE) ===== */
+#pseudo {
+  position: fixed;
+  top: 420px;
+  left: 20px;
+  width: 280px;
+  background: rgba(0,0,0,0.8);
+  border-radius: 14px;
+  padding: 14px;
+  color: #b5f7ff;
+  font-family: Consolas, monospace;
+  font-size: 13px;
+  display: none;
+  z-index: 40;
+}
+
+.line {
+  padding: 4px 6px;
+  border-radius: 6px;
+}
+.line.active {
+  background: rgba(0,234,255,0.25);
+  color: #00ffff;
+}
+</style>
+</head>
+
+<body>
+
+<a href="trees.html" class="back-btn">←</a>
+
+<header>
+  <div class="title">Binary Search Tree</div>
+  <div class="subtitle">Insert, Search, Delete with Live Pseudocode</div>
+</header>
+
+<div id="panel">
+  <input id="valueInput" placeholder="Enter value" />
+  <button onclick="insertNode()">Insert</button>
+  <button onclick="searchNode()">Search</button>
+  <button onclick="deleteNode()">Delete</button>
+  <button onclick="resetTree()">Reset</button>
+  <div id="status">Status: Ready</div>
+</div>
+
+<div id="pseudo"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+
+<script>
+/* ---------- THREE ---------- */
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x111111);
+
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
+camera.position.set(0,14,26);
+camera.lookAt(0,0,0);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+scene.add(new THREE.AmbientLight(0xffffff,0.9));
+scene.add(new THREE.DirectionalLight(0xffffff,1));
+
+const group = new THREE.Group();
+scene.add(group);
+
+let tree = [];
+let labels = [];
+
+/* ---------- STATUS ---------- */
+function status(msg,color="#00eaff"){
+  const s=document.getElementById("status");
+  s.innerText=msg;
+  s.style.color=color;
+}
+
+/* ---------- PSEUDO ---------- */
+function showPseudo(lines){
+  const box=document.getElementById("pseudo");
+  box.innerHTML="";
+  box.style.display="block";
+  lines.forEach((l,i)=>{
+    const div=document.createElement("div");
+    div.className="line";
+    div.id="line"+i;
+    div.innerText=l;
+    box.appendChild(div);
+  });
+}
+function highlight(i){
+  document.querySelectorAll(".line").forEach(l=>l.classList.remove("active"));
+  const el=document.getElementById("line"+i);
+  if(el) el.classList.add("active");
+}
+
+/* ---------- LABEL (FIXED) ---------- */
+function createLabel(text){
+  const canvas=document.createElement("canvas");
+  canvas.width=256;
+  canvas.height=256;
+  const ctx=canvas.getContext("2d");
+
+  ctx.fillStyle="#ffffff";
+  ctx.font="bold 140px Arial";
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
+  ctx.fillText(text,128,128);
+
+  const texture=new THREE.CanvasTexture(canvas);
+  const sprite=new THREE.Sprite(
+    new THREE.SpriteMaterial({
+      map:texture,
+      depthTest:false
+    })
+  );
+  sprite.scale.set(2.2,2.2,1);
+  sprite.position.set(0,0,1.4); // 🔥 push in front
+  labels.push(sprite);
+  return sprite;
+}
+
+/* ---------- POSITION ---------- */
+function getPos(i){
+  const lvl=Math.floor(Math.log2(i+1));
+  const off=i-(2**lvl-1);
+  return new THREE.Vector3(
+    (off-(2**lvl-1)/2)*3.8,
+    8-lvl*3,
+    0
+  );
+}
+
+/* ---------- DRAW ---------- */
+function drawTree(){
+  group.clear();
+  labels=[];
+
+  tree.forEach((v,i)=>{
+    if(v==null) return;
+
+    const node=new THREE.Mesh(
+      new THREE.SphereGeometry(1.2,32,32),
+      new THREE.MeshStandardMaterial({color:0x0077ff})
+    );
+    node.position.copy(getPos(i));
+    node.add(createLabel(v.toString()));
+    group.add(node);
+
+    if(i>0){
+      const p=Math.floor((i-1)/2);
+      const g=new THREE.BufferGeometry().setFromPoints([getPos(p),getPos(i)]);
+      group.add(new THREE.Line(g,new THREE.LineBasicMaterial({color:0xffffff})));
+    }
+  });
+}
+
+/* ---------- INSERT ---------- */
+async function insertNode(){
+  const v=parseInt(valueInput.value);
+  if(isNaN(v)) return;
+
+  showPseudo([
+    "IF root == NULL",
+    "CREATE newNode",
+    "IF key < root.value",
+    "GO LEFT",
+    "ELSE GO RIGHT",
+    "RETURN root"
+  ]);
+
+  highlight(0); await delay();
+  tree.push(v);
+  highlight(1); await delay();
+  drawTree();
+  highlight(5);
+  status("Inserted "+v);
+}
+
+/* ---------- SEARCH ---------- */
+async function searchNode(){
+  const v=parseInt(valueInput.value);
+  if(isNaN(v)) return;
+
+  showPseudo([
+    "IF root == NULL RETURN false",
+    "IF root.value == key RETURN true",
+    "IF key < root.value GO LEFT",
+    "ELSE GO RIGHT"
+  ]);
+
+  let found=false;
+  for(let i=0;i<tree.length;i++){
+    highlight(1); await delay();
+    if(tree[i]===v){ found=true; break; }
+  }
+  status(found?"Found "+v:"Not Found",found?"#00ff00":"#ff4444");
+}
+
+/* ---------- DELETE ---------- */
+async function deleteNode(){
+  const v=parseInt(valueInput.value);
+  if(isNaN(v)) return;
+
+  showPseudo([
+    "IF root == NULL RETURN root",
+    "IF key < root.value GO LEFT",
+    "IF key > root.value GO RIGHT",
+    "CASE 1: NO CHILD",
+    "CASE 2: ONE CHILD",
+    "CASE 3: TWO CHILDREN"
+  ]);
+
+  let i=tree.indexOf(v);
+  if(i===-1){ status("Value not found","#ff4444"); return; }
+
+  highlight(3); await delay();
+  tree[i]=tree[tree.length-1];
+  tree.pop();
+  drawTree();
+  status("Deleted "+v,"#ff4444");
+}
+
+/* ---------- RESET ---------- */
+function resetTree(){
+  tree=[];
+  group.clear();
+  document.getElementById("pseudo").style.display="none";
+  status("Tree Reset");
+}
+
+/* ---------- UTIL ---------- */
+function delay(){ return new Promise(r=>setTimeout(r,800)); }
+
+/* ---------- RENDER ---------- */
+function animate(){
+  requestAnimationFrame(animate);
+  labels.forEach(l=>l.lookAt(camera.position)); // 🔥 keep readable
+  renderer.render(scene,camera);
+}
+animate();
+
+window.addEventListener("resize",()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
+});
+</script>
+
+</body>
+</html>

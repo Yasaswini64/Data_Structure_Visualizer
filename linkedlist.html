@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Linked Lists</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: #f6f9fc;
+    color: #1f2937;
+  }
+
+  /* ================= HEADER ================= */
+  .page-header {
+    position: relative;
+    padding: 28px 32px 32px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: center;
+  }
+
+  .back-btn {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+
+    font-size: 34px;
+    padding: 8px 14px;
+    font-weight: 700;
+    color: #2563eb;
+    cursor: pointer;
+    border-radius: 50%;
+    text-decoration: none; /* ✅ NO UNDERLINE */
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+
+  .back-btn:hover {
+    transform: translateY(-50%) scale(1.15);
+    background: rgba(37, 99, 235, 0.1);
+  }
+
+  .page-header h1 {
+    margin: 0;
+    font-size: 38px;
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  .page-header p {
+    margin-top: 8px;
+    font-size: 17px;
+    color: #64748b;
+  }
+
+  /* ================= MAIN ================= */
+  .container {
+    max-width: 1400px; /* ✅ INCREASED WIDTH */
+    margin: 50px auto;
+    padding: 0 32px;
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); /* ✅ BIGGER CARDS */
+    gap: 36px;
+  }
+
+  /* ================= CARD ================= */
+  .card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .card h2 {
+    margin-top: 0;
+    font-size: 24px;
+    color: #1d4ed8;
+  }
+
+  .card p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: #374151;
+  }
+
+  .card strong {
+    display: block;
+    margin-top: 16px;
+    margin-bottom: 6px;
+    color: #0f172a;
+  }
+
+  .example {
+    margin-top: 14px;
+    background: #f1f5f9;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-family: monospace;
+    font-size: 15px;
+    color: #334155;
+  }
+
+  .btn {
+    margin-top: 26px;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .btn:hover {
+    opacity: 0.95;
+  }
+
+  /* ================= FOOTER ================= */
+  footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 14px;
+    color: #64748b;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="page-header">
+  <a class="back-btn" href="HomePage.html">←</a>
+  <h1>Linked Lists</h1>
+  <p>Explore different types of linked list data structures</p>
+</div>
+
+<!-- CONTENT -->
+<div class="container">
+  <div class="card-grid">
+
+    <!-- Singly Linked List -->
+    <div class="card">
+      <div>
+        <h2>Singly Linked List</h2>
+        <p>A linear data structure where each node points to the next node.</p>
+
+        <strong>Use Cases:</strong>
+        <p>Stack implementation, dynamic memory allocation, browser history</p>
+
+        <strong>Operations:</strong>
+        <p>Insert at beginning/end, Delete node, Traverse forward</p>
+
+        <strong>Example:</strong>
+        <div class="example">Node1 → Node2 → Node3 → NULL</div>
+      </div>
+
+      <button class="btn" onclick="location.href='singlylinkedlist.html'">
+        Visualize
+      </button>
+    </div>
+
+    <!-- Doubly Linked List -->
+    <div class="card">
+      <div>
+        <h2>Doubly Linked List</h2>
+        <p>Each node has pointers to both the next and previous nodes.</p>
+
+        <strong>Use Cases:</strong>
+        <p>Browser navigation (back/forward), undo/redo, music playlist</p>
+
+        <strong>Operations:</strong>
+        <p>Insert at any position, Delete node, Traverse both directions</p>
+
+        <strong>Example:</strong>
+        <div class="example">NULL ← Node1 ⇄ Node2 ⇄ Node3 → NULL</div>
+      </div>
+
+      <button class="btn" onclick="location.href='doublylinkedlist.html'">
+        Visualize
+      </button>
+    </div>
+
+    <!-- Circular Linked List -->
+    <div class="card">
+      <div>
+        <h2>Circular Linked List</h2>
+        <p>The last node points back to the first node, forming a circle.</p>
+
+        <strong>Use Cases:</strong>
+        <p>Round-robin scheduling, circular buffers, multiplayer games</p>
+
+        <strong>Operations:</strong>
+        <p>Insert node, Delete node, Traverse continuously</p>
+
+        <strong>Example:</strong>
+        <div class="example">Node1 → Node2 → Node3 → Node1 (circular)</div>
+      </div>
+
+      <button class="btn" onclick="location.href='circularlinkedlist.html'">
+        Visualize
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  © 2025 Data Structure Visualizer
+</footer>
+
+</body>
+</html>

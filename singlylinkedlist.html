@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Single Linked List Visualizer</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", sans-serif;
+        background: #f6f9fc;
+        color: #1f2937;
+      }
+
+      .header-bar {
+        height: 80px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: white;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .header-bar h1 {
+        font-size: 36px;
+        color: #1d4ed8;
+      }
+
+      .main {
+        max-width: 1400px;
+        margin: 40px auto;
+        padding: 0 24px;
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        gap: 28px;
+      }
+
+      /* PANEL */
+      #panel {
+        background: white;
+        border-radius: 16px;
+        padding: 22px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      }
+
+      input,
+      button {
+        width: 100%;
+        margin-top: 10px;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+      }
+
+      button {
+        background: #2563eb;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      #status {
+        margin-top: 14px;
+        padding: 10px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-weight: 600;
+        text-align: center;
+        border-radius: 8px;
+      }
+
+      /* EXECUTION */
+      #execution {
+        margin-top: 18px;
+        background: #0f172a;
+        color: #e5e7eb;
+        padding: 14px;
+        border-radius: 12px;
+        font-family: monospace;
+        font-size: 13px;
+        min-height: 140px;
+      }
+
+      .exec-line {
+        padding: 3px 6px;
+        border-radius: 6px;
+      }
+
+      .active {
+        background: #22c55e;
+        color: #022c22;
+        font-weight: bold;
+      }
+
+      /* VISUAL */
+      .visual-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      }
+
+      #visual {
+        display: flex;
+        align-items: center;
+        min-height: 200px;
+      }
+
+      .node {
+        display: flex;
+        background: #3b82f6;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-right: 14px;
+      }
+
+      .data,
+      .next {
+        width: 90px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+      }
+
+      .data {
+        font-size: 22px;
+        font-weight: bold;
+        border-right: 2px solid rgba(255, 255, 255, 0.4);
+      }
+
+      .arrow {
+        font-size: 36px;
+        margin: 0 16px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="header-bar">
+      <h1>Single Linked List</h1>
+    </div>
+
+    <div class="main">
+      <div id="panel">
+        <h3>Controls</h3>
+        <input id="valueInput" placeholder="Enter value" />
+        <button onclick="insert()">Insert</button>
+        <button onclick="deleteNode()">Delete</button>
+        <button onclick="search()">Search</button>
+        <button onclick="resetList()">Reset</button>
+
+        <div id="status">Linked List is Empty</div>
+
+        <h3 style="margin-top: 18px">Code Execution</h3>
+        <div id="execution">Waiting for operation...</div>
+      </div>
+
+      <div class="visual-card">
+        <h3>Visualization</h3>
+        <div id="visual"></div>
+      </div>
+    </div>
+
+    <script>
+      /* ================= CACHE ================= */
+      const valueInput = document.getElementById("valueInput");
+      const statusBox = document.getElementById("status");
+      const execBox = document.getElementById("execution");
+      const visual = document.getElementById("visual");
+
+      let list = [];
+      let execTimer = null;
+
+      /* ================= EXECUTION ENGINE ================= */
+      function executeSteps(steps, stopAt) {
+        clearTimeout(execTimer);
+        execBox.innerHTML = "";
+
+        const lines = steps.map((step) => {
+          const div = document.createElement("div");
+          div.className = "exec-line";
+          div.textContent = step;
+          execBox.appendChild(div);
+          return div;
+        });
+
+        let i = 0;
+        (function run() {
+          if (i > 0) lines[i - 1].classList.remove("active");
+          if (i <= stopAt) {
+            lines[i].classList.add("active");
+            i++;
+            execTimer = setTimeout(run, 550);
+          }
+        })();
+      }
+
+      /* ================= RENDER ================= */
+      function render() {
+        visual.innerHTML = "";
+        list.forEach((val, i) => {
+          const node = document.createElement("div");
+          node.className = "node";
+          node.innerHTML = `<div class="data">${val}</div><div class="next">NEXT</div>`;
+          visual.appendChild(node);
+          if (i !== list.length - 1)
+            visual.innerHTML += `<div class="arrow">→</div>`;
+        });
+      }
+
+      /* ================= INSERT ================= */
+      function insert() {
+        const val = valueInput.value.trim();
+        if (!val) return;
+
+        executeSteps(
+          [
+            "Read input value",
+            "Create new node",
+            "Assign data to node",
+            "Link node at end",
+            "Insertion complete",
+          ],
+          4
+        );
+
+        list.push(val);
+        statusBox.innerText = `Inserted ${val}`;
+        render();
+      }
+
+      /* ================= DELETE ================= */
+      function deleteNode() {
+        const val = valueInput.value.trim();
+        if (!val) return;
+
+        const idx = list.indexOf(val);
+
+        const steps = [
+          "Start from head",
+          "Traverse list",
+          "Value not found → stop",
+          "Update links",
+          "Delete node",
+        ];
+
+        if (idx === -1) {
+          executeSteps(steps, 2);
+          statusBox.innerText = `${val} not found`;
+          return;
+        }
+
+        executeSteps(steps, 4);
+        list.splice(idx, 1);
+        statusBox.innerText = `Deleted ${val}`;
+        render();
+      }
+
+      /* ================= SEARCH ================= */
+      function search() {
+        const val = valueInput.value.trim();
+        if (!val) return;
+
+        const idx = list.indexOf(val);
+
+        const steps = [
+          "Start from head",
+          "Compare node data",
+          "Value found → stop",
+          "Move to next node",
+        ];
+
+        executeSteps(steps, idx === -1 ? 3 : 2);
+        statusBox.innerText =
+          idx === -1 ? `${val} not found` : `${val} found at position ${idx}`;
+      }
+
+      /* ================= RESET ================= */
+      function resetList() {
+        list = [];
+        visual.innerHTML = "";
+        execBox.innerText = "Waiting for operation...";
+        statusBox.innerText = "Linked List is Empty";
+      }
+    </script>
+  </body>
+</html>

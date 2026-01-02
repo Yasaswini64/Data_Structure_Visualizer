@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Searching Algorithms</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top, #f0f4f8, #ffffff);
+      color: #333;
+    }
+
+    header {
+      text-align: center;
+      padding: 25px 10px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #0077ff;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    header span {
+      display: block;
+      font-size: 14px;
+      color: #555;
+      margin-top: 4px;
+    }
+
+    .container {
+      padding: 30px;
+      display: flex;
+      flex-direction: column; /* Top-down stacking */
+      gap: 40px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 6px 25px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 35px rgba(0,0,0,0.15);
+    }
+
+    .card h2 {
+      color: #0077ff;
+      margin-bottom: 15px;
+      font-size: 24px;
+    }
+
+    .card p {
+      font-size: 15px;
+      color: #333;
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+
+    .card ol {
+      padding-left: 20px;
+      margin-bottom: 15px;
+      color: #555;
+    }
+
+    .card strong {
+      color: #0077ff;
+    }
+
+    .card button {
+      padding: 12px 22px;
+      border: none;
+      border-radius: 25px;
+      background: linear-gradient(135deg, #00bfff, #0077ff);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+      transition: opacity 0.2s ease;
+    }
+
+    .card button:hover {
+      opacity: 0.9;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      font-size: 13px;
+      color: #555;
+      background: rgba(255,255,255,0.8);
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  Searching Algorithms
+  <span>Learn & Visualize Linear and Binary Search</span>
+</header>
+
+<div class="container">
+
+  <!-- Linear Search Card -->
+  <div class="card">
+    <h2>Linear Search</h2>
+    <p><strong>Overview:</strong> Linear Search is a simple searching algorithm that checks each element of a list sequentially until the desired element is found or the list ends. It does not require the list to be sorted.</p>
+    <p><strong>Use Cases:</strong> Useful for small datasets, unsorted lists, or when quick implementation is needed. Not efficient for large datasets as it has <strong>O(n)</strong> time complexity.</p>
+    <p><strong>Algorithm Steps:</strong></p>
+    <ol>
+      <li>Start from the first element of the array.</li>
+      <li>Compare the target element with the current element.</li>
+      <li>If it matches, return the index.</li>
+      <li>If not, move to the next element and repeat.</li>
+      <li>If the end of the array is reached without a match, return -1 (not found).</li>
+    </ol>
+    <p><strong>Example:</strong> Searching for <em>7</em> in [3, 5, 2, 7, 1] will check 3 → 5 → 2 → 7 and find it at index 3.</p>
+    <button onclick="window.location.href='LinearSearch.html'">Visualize</button>
+  </div>
+
+  <!-- Binary Search Card -->
+  <div class="card">
+    <h2>Binary Search</h2>
+    <p><strong>Overview:</strong> Binary Search is an efficient algorithm for finding an element in a <strong>sorted array</strong>. It repeatedly divides the search interval in half, reducing the search space quickly.</p>
+    <p><strong>Use Cases:</strong> Large datasets where the array/list is sorted. It has a time complexity of <strong>O(log n)</strong>, making it much faster than Linear Search for big data.</p>
+    <p><strong>Algorithm Steps:</strong></p>
+    <ol>
+      <li>Initialize the first (low) and last (high) indices of the array.</li>
+      <li>Find the middle index: <em>mid = Math.floor((low + high)/2)</em>.</li>
+      <li>If array[mid] equals the target, return mid.</li>
+      <li>If target &lt; array[mid], search the left half (high = mid - 1).</li>
+      <li>If target &gt; array[mid], search the right half (low = mid + 1).</li>
+      <li>Repeat until the target is found or low &gt; high (not found).</li>
+    </ol>
+    <p><strong>Example:</strong> Searching for <em>7</em> in [1, 2, 3, 5, 7, 9] checks mid → left/right halves → finds 7 at index 4.</p>
+    <button onclick="window.location.href='BinarySearch.html'">Visualize</button>
+  </div>
+
+</div>
+
+<footer>
+  © 2025 Data Structure Visualizer
+</footer>
+
+</body>
+</html>

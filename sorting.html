@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sorting Algorithms</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top, #f0f4f8, #ffffff);
+      color: #333;
+    }
+
+    header {
+      text-align: center;
+      padding: 25px 10px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #0077ff;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    header span {
+      display: block;
+      font-size: 14px;
+      color: #555;
+      margin-top: 4px;
+    }
+
+    .container {
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 6px 25px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 35px rgba(0,0,0,0.15);
+    }
+
+    .card h2 {
+      color: #0077ff;
+      margin-bottom: 15px;
+      font-size: 24px;
+    }
+
+    .card p {
+      font-size: 15px;
+      color: #333;
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+
+    .card ol {
+      padding-left: 20px;
+      margin-bottom: 15px;
+      color: #555;
+    }
+
+    .card strong {
+      color: #0077ff;
+    }
+
+    .card button {
+      padding: 12px 22px;
+      border: none;
+      border-radius: 25px;
+      background: linear-gradient(135deg, #00bfff, #0077ff);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+      transition: opacity 0.2s ease;
+    }
+
+    .card button:hover {
+      opacity: 0.9;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      font-size: 13px;
+      color: #555;
+      background: rgba(255,255,255,0.8);
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  Sorting Algorithms
+  <span>Learn & Visualize Common Sorting Techniques</span>
+</header>
+
+<div class="container">
+
+  <!-- Bubble Sort Card -->
+  <div class="card">
+    <h2>Bubble Sort</h2>
+    <p><strong>Overview:</strong> Bubble Sort repeatedly compares adjacent elements and swaps them if they are in the wrong order. Simple but inefficient for large datasets.</p>
+    <p><strong>Use Cases:</strong> Educational purposes, small datasets, easy to implement.</p>
+    <p><strong>Algorithm Steps:</strong></p>
+    <ol>
+      <li>Compare each pair of adjacent elements in the array.</li>
+      <li>Swap them if they are in the wrong order.</li>
+      <li>Repeat for each element in the array until sorted.</li>
+    </ol>
+    <p><strong>Example:</strong> Sorting [5, 2, 9, 1] → pass 1: [2, 5, 1, 9], pass 2: [2, 1, 5, 9], pass 3: [1, 2, 5, 9]</p>
+    <button onclick="window.location.href='bubblesort.html'">Visualize</button>
+  </div>
+
+  <!-- Selection Sort Card -->
+  <div class="card">
+    <h2>Selection Sort</h2>
+    <p><strong>Overview:</strong> Selection Sort finds the minimum element from the unsorted portion and places it at the beginning. Repeats for the rest of the array.</p>
+    <p><strong>Use Cases:</strong> Small arrays, minimal writes compared to Bubble Sort.</p>
+    <p><strong>Algorithm Steps:</strong></p>
+    <ol>
+      <li>Find the minimum element in the unsorted part of the array.</li>
+      <li>Swap it with the first element of the unsorted part.</li>
+      <li>Move the boundary of unsorted part by one and repeat.</li>
+    </ol>
+    <p><strong>Example:</strong> Sorting [4, 2, 5, 1] → pass 1: [1, 2, 5, 4], pass 2: [1, 2, 5, 4], pass 3: [1, 2, 4, 5]</p>
+    <button onclick="window.location.href='selectionsort.html'">Visualize</button>
+  </div>
+
+   <!-- Insertion Sort Card -->
+<div class="card">
+  <h2>Insertion Sort</h2>
+
+  <p>
+    <strong>Overview:</strong>Insertion Sort is a simple comparison-based sorting algorithm that builds the sorted array one element at a time by inserting each new element into its correct position.
+  </p>
+
+  <p>
+    <strong>Use Cases:</strong>
+    Small datasets, nearly sorted arrays, and real-time systems.
+    Performs efficiently when the number of elements is low.
+    Best-case time complexity <strong>O(n)</strong>, worst-case
+    <strong>O(n²)</strong>.
+  </p>
+
+  <p><strong>Algorithm Steps:</strong></p>
+  <ol>
+    <li>Start from the second element of the array.</li>
+    <li>Compare the current element with the previous elements.</li>
+    <li>Shift larger elements one position to the right.</li>
+    <li>Insert the current element at its correct position.</li>
+    <li>Repeat until the entire array is sorted.</li>
+  </ol>
+
+  <p>
+    <strong>Example:</strong>
+    Sorting [4, 1, 5, 2] →
+    [1, 4, 5, 2] →
+    [1, 4, 5, 2] →
+    [1, 2, 4, 5]
+  </p>
+
+  <button onclick="window.location.href='insertionsort.html'">
+    Visualize
+  </button>
+</div>
+
+  <!-- Merge Sort Card -->
+  <div class="card">
+    <h2>Merge Sort</h2>
+    <p><strong>Overview:</strong> Merge Sort is a divide-and-conquer algorithm that divides the array into halves, sorts them, and merges them back.</p>
+    <p><strong>Use Cases:</strong> Large datasets, linked lists, external sorting. Time complexity <strong>O(n log n)</strong>.</p>
+    <p><strong>Algorithm Steps:</strong></p>
+    <ol>
+      <li>Divide the array into two halves.</li>
+      <li>Recursively sort each half.</li>
+      <li>Merge the sorted halves into a single sorted array.</li>
+    </ol>
+    <p><strong>Example:</strong> Sorting [4, 1, 5, 2] → divide: [4,1] & [5,2] → sort: [1,4] & [2,5] → merge: [1,2,4,5]</p>
+    <button onclick="window.location.href='mergesort.html'">Visualize</button>
+  </div>
+  
+  
+  <!-- Quick Sort Card -->
+  <div class="card">
+    <h2>Quick Sort</h2>
+    <p><strong>Overview:</strong> Quick Sort selects a pivot and partitions the array into elements less than and greater than the pivot. Then recursively sorts the partitions.</p>
+    <p><strong>Use Cases:</strong> Large datasets, efficient in practice. Average time complexity <strong>O(n log n)</strong>, worst case <strong>O(n²)</strong>.</p>
+    <p><strong>Algorithm Steps:</strong></p>
+    <ol>
+      <li>Pick a pivot element.</li>
+      <li>Partition the array: elements smaller than pivot left, larger right.</li>
+      <li>Recursively apply Quick Sort to left and right partitions.</li>
+    </ol>
+    <p><strong>Example:</strong> Sorting [3,6,2,5] → pivot 5 → partition: [3,2] & [6] → sort left: [2,3] → final: [2,3,5,6]</p>
+    <button onclick="window.location.href='quicksort.html'">Visualize</button>
+  </div>
+
+  <!-- Heap Sort Card -->
+  <div class="card">
+    <h2>Heap Sort</h2>
+    <p><strong>Overview:</strong> Heap Sort builds a max heap from the array and repeatedly extracts the maximum element to sort the array.</p>
+    <p><strong>Use Cases:</strong> Large datasets, in-place sorting, no recursion required for iterative heap sort. Time complexity <strong>O(n log n)</strong>.</p>
+    <p><strong>Algorithm Steps:</strong></p>
+    <ol>
+      <li>Build a max heap from the input array.</li>
+      <li>Swap the first (maximum) element with the last element.</li>
+      <li>Reduce the heap size by 1 and heapify the root.</li>
+      <li>Repeat until the heap size is 1.</li>
+    </ol>
+    <p><strong>Example:</strong> Sorting [4,10,3,5] → build max heap: [10,5,3,4] → swap 10 & 4 → heapify → repeat → [3,4,5,10]</p>
+    <button onclick="window.location.href='heapsort.html'">Visualize</button>
+  </div>
+
+</div>
+
+<footer>
+  © 2025 Data Structure Visualizer
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>DSA Visualizer</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #f0f4f8, #ffffff);
+      color: #333;
+    }
+
+    /* HEADER */
+    header {
+      text-align: center;
+      padding: 28px 10px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 34px;
+      letter-spacing: 2px;
+      color: #0077ff;
+    }
+
+    header p {
+      margin-top: 8px;
+      font-size: 15px;
+      color: #555;
+    }
+
+    /* SECTION TITLE */
+    .section-title {
+      padding: 30px 40px 10px;
+      font-size: 22px;
+      font-weight: 600;
+      color: #222;
+    }
+
+    /* CONTAINER */
+    .container {
+      padding: 20px 40px 50px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 30px;
+    }
+
+    /* CARD */
+    .card {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 18px;
+      padding: 26px;
+      text-align: center;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 14px 38px rgba(0, 0, 0, 0.2);
+    }
+
+    .card h2 {
+      margin-bottom: 10px;
+      color: #0077ff;
+      font-size: 20px;
+    }
+
+    .card p {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 22px;
+    }
+
+    .card a {
+      display: inline-block;
+      padding: 10px 22px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #00bfff, #0077ff);
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .card a:hover {
+      opacity: 0.9;
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 16px;
+      font-size: 13px;
+      color: #555;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <h1>DSA Visualizer</h1>
+    <p>Learn Data Structures and Algorithms through simple visual explanations</p>
+  </header>
+
+  <!-- DATA STRUCTURES -->
+  <div class="section-title">Data Structures</div>
+  <div class="container">
+    <div class="card">
+      <h2>Stack</h2>
+      <p>LIFO data structure with push and pop operations.</p>
+      <a href="stack.html">Explore</a>
+    </div>
+
+    <div class="card">
+      <h2>Queue</h2>
+      <p>FIFO data structure with enqueue and dequeue operations.</p>
+      <a href="queue.html">Explore</a>
+    </div>
+
+    <div class="card">
+      <h2>Linked List</h2>
+      <p>Singly linked list with insert and delete operations.</p>
+      <a href="linkedlist.html">Explore</a>
+    </div>
+
+    <div class="card">
+      <h2>Trees</h2>
+      <p>Binary Tree and Binary Search Tree visualizations.</p>
+      <a href="trees.html">Explore</a>
+    </div>
+
+    <div class="card">
+      <h2>Graphs</h2>
+      <p>Graph traversal techniques like BFS and DFS.</p>
+      <a href="graphs.html">Explore</a>
+    </div>
+  </div>
+
+  <!-- ALGORITHMS -->
+  <div class="section-title">Algorithms</div>
+  <div class="container">
+    <div class="card">
+      <h2>Linear Search</h2>
+      <p>Sequentially checks each element in the list.</p>
+      <a href="linearsearch.html">Explore</a>
+    </div>
+
+    <div class="card">
+      <h2>Binary Search</h2>
+      <p>Efficient search algorithm for sorted arrays.</p>
+      <a href="binarysearch.html">Explore</a>
+    </div>
+
+    <div class="card">
+      <h2>Bubble Sort</h2>
+      <p>Repeatedly swaps adjacent elements if needed.</p>
+      <a href="bubblesort.html">Explore</a>
+    </div>
+
+    <div class="card">
+      <h2>Selection Sort</h2>
+      <p>Selects the minimum element and places it correctly.</p>
+      <a href="selectionsort.html">Explore</a>
+    </div>
+
+    <div class="card">
+      <h2>Insertion Sort</h2>
+      <p>Builds the sorted array one element at a time.</p>
+      <a href="insertionsort.html">Explore</a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    © 2025 DSA Visualizer | Built for Learning
+  </footer>
+
+</body>
+</html>
