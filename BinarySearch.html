@@ -1,349 +1,402 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>3D Binary Search</title>
+<head>
+<meta charset="UTF-8" />
+<title>3D Binary Search</title>
 
-    <style>
-      body {
-        margin: 0;
-        overflow: hidden;
-        background: radial-gradient(circle at top, #1a1a1a, #000);
-        font-family: "Segoe UI", sans-serif;
-      }
+<style>
+/* ---------- GLOBAL ---------- */
+body {
+  margin: 0;
+  overflow: hidden;
+  background: #ffffff;
+  font-family: "Segoe UI", sans-serif;
+  color: #000;
+}
 
-      .back-btn {
-        position: fixed;
-        top: 18px;
-        left: 18px;
-        font-size: 32px;
-        color: #00eaff;
-        text-decoration: none;
-        font-weight: bold;
-        z-index: 100;
-      }
+/* ---------- BACK BUTTON ---------- */
+.back-btn {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  font-size: 32px;
+  color: #0077ff;
+  text-decoration: none;
+  font-weight: bold;
+  z-index: 100;
+}
 
-      header {
-        position: fixed;
-        top: 0;
-        width: 100%;
-        height: 90px;
-        background: rgba(0, 0, 0, 0.75);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        z-index: 50;
-      }
+/* ---------- HEADER ---------- */
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 90px;
+  background: #f5f7fa;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
 
-      header .title {
-        font-size: 28px;
-        color: #00eaff;
-      }
-      header .subtitle {
-        font-size: 14px;
-        color: #b5f7ff;
-      }
+header .title {
+  font-size: 28px;
+  color: #0077ff;
+  font-weight: bold;
+}
+header .subtitle {
+  font-size: 14px;
+  color: #555;
+}
 
-      #panel {
-        position: fixed;
-        top: 120px;
-        left: 20px;
-        width: 270px;
-        background: rgba(255, 255, 255, 0.08);
-        border-radius: 14px;
-        padding: 16px;
-        color: #fff;
-        z-index: 40;
-      }
+/* ---------- PANEL ---------- */
+#panel {
+  position: fixed;
+  top: 120px;
+  left: 20px;
+  width: 270px;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 16px;
+  color: #000;
+  z-index: 40;
+  border: 1px solid #ddd;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
 
-      input,
-      button {
-        width: 100%;
-        margin-top: 8px;
-        padding: 8px;
-        border-radius: 8px;
-        border: none;
-      }
+/* ---------- INPUTS & BUTTONS ---------- */
+input, button {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
 
-      input {
-        background: rgba(0, 0, 0, 0.6);
-        color: #00eaff;
-      }
-      button {
-        background: linear-gradient(135deg, #00eaff, #0077ff);
-        font-weight: bold;
-      }
+input {
+  background: #f9f9f9;
+  color: #000;
+}
 
-      #status {
-        margin-top: 12px;
-        padding: 8px;
-        text-align: center;
-        background: rgba(0, 0, 0, 0.5);
-        color: #00eaff;
-      }
-    </style>
-  </head>
+input[type="range"] {
+  accent-color: #0077ff;
+}
 
-  <body>
-    <a href="HomePage.html" class="back-btn">←</a>
+button {
+  background: linear-gradient(135deg,#0077ff,#00aaff);
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+}
 
-    <header>
-      <div class="title">Binary Search</div>
-      <div class="subtitle">Step-by-step execution</div>
-    </header>
+button:hover {
+  opacity: 0.9;
+}
 
-    <div id="panel">
-      <input id="arrayInput" value="1,2,3,5,7,9,11" />
-      <input id="targetInput" type="number" value="4" />
+/* ---------- STATUS ---------- */
+#status {
+  margin-top: 12px;
+  padding: 8px;
+  text-align: center;
+  background: #f1f3f6;
+  color: #0077ff;
+  border-radius: 8px;
+  font-weight: bold;
+}
 
-      <button onclick="generate()">Generate</button>
-      <button onclick="start()">▶ Start</button>
-      <button onclick="pause()">⏸ Pause</button>
-      <button onclick="reset()">🔄 Reset</button>
+/* ---------- PSEUDOCODE ---------- */
+.code {
+  margin-top: 14px;
+  background: #f8f9fc;
+  color: #000;
+  padding: 10px;
+  border-radius: 10px;
+  font-family: Consolas, monospace;
+  border: 1px solid #ddd;
+}
+.code div {
+  padding: 2px 4px;
+}
 
-      <!-- SPEED (same logic as bubble sort) -->
-      <input id="speed" type="range" min="1" max="100" value="50" />
-      <div id="status">Status: Ready</div>
+/* ---------- COMPLEXITY TABLE ---------- */
+#complexity {
+  position: fixed;
+  bottom: 18px;
+  right: 18px;
+  background: #ffffff;
+  color: #000;
+  padding: 12px;
+  border-radius: 10px;
+  z-index: 100;
+  font-family: Consolas, monospace;
+  font-size: 13px;
+  min-width: 220px;
+  border: 1px solid #ddd;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
 
-      <div
-        style="
-          margin-top: 14px;
-          background: white;
-          color: black;
-          padding: 10px;
-          border-radius: 10px;
-          font-family: Consolas;
-        "
-      >
-        <div id="l1">while (left &lt;= right)</div>
-        <div id="l2">&nbsp;&nbsp;mid = (left + right) / 2</div>
-        <div id="l3">&nbsp;&nbsp;if (arr[mid] == target)</div>
-        <div id="l4">&nbsp;&nbsp;&nbsp;&nbsp;return mid</div>
-        <div id="l5">&nbsp;&nbsp;else if (arr[mid] &lt; target)</div>
-        <div id="l6">&nbsp;&nbsp;&nbsp;&nbsp;left = mid + 1</div>
-        <div id="l7">&nbsp;&nbsp;else</div>
-        <div id="l8">&nbsp;&nbsp;&nbsp;&nbsp;right = mid - 1</div>
-        <div id="l9">return -1</div>
-      </div>
-    </div>
+#complexity table {
+  width: 100%;
+  border-collapse: collapse;
+}
 
-    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+#complexity th {
+  text-align: left;
+  padding-bottom: 6px;
+  color: #0077ff;
+}
 
-    <script>
-      /* ---------- THREE ---------- */
-      const scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x111111);
+#complexity td {
+  padding: 6px 8px;
+}
 
-      const camera = new THREE.PerspectiveCamera(
-        60,
-        window.innerWidth / window.innerHeight,
-        0.1,
-        1000
-      );
-      camera.position.set(0, 6, 16);
-      camera.lookAt(0, 0, 0);
+#complexity .active {
+  background: rgba(0,119,255,0.15);
+  color: #0077ff;
+  font-weight: bold;
+  border-radius: 4px;
+}
+</style>
+</head>
 
-      const renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.domElement.style.position = "fixed";
-      renderer.domElement.style.zIndex = "1";
-      document.body.appendChild(renderer.domElement);
+<body>
 
-      scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-      const light = new THREE.DirectionalLight(0xffffff, 1);
-      light.position.set(5, 10, 5);
-      scene.add(light);
+<a href="HomePage.html" class="back-btn">←</a>
 
-      const group = new THREE.Group();
-      scene.add(group);
+<header>
+  <div class="title">Binary Search</div>
+  <div class="subtitle">Step-by-step execution</div>
+</header>
 
-      /* ---------- DATA ---------- */
-      let array = [],
-        target;
-      let boxes = [],
-        labels = [];
-      let left = 0,
-        right = 0,
-        mid = 0,
-        phase = 0;
-      let running = false,
-        lastTime = 0;
+<div id="panel">
+  <input id="arrayInput" value="1,2,3,5,7,9,11" />
+  <input id="targetInput" type="number" value="4" />
 
-      /* ---------- ROTATION (same as bubble sort) ---------- */
-      let mouseDown = false,
-        lastX = 0,
-        lastY = 0,
-        allowRotation = true;
-      const panel = document.getElementById("panel");
+  <button onclick="generate()">Generate</button>
+  <button onclick="start()">▶ Start</button>
+  <button onclick="pause()">⏸ Pause</button>
+  <button onclick="reset()">🔄 Reset</button>
 
-      panel.addEventListener("mouseenter", () => (allowRotation = false));
-      panel.addEventListener("mouseleave", () => (allowRotation = true));
+  <input id="speed" type="range" min="1" max="100" value="50" />
+  <div id="status">Status: Ready</div>
 
-      window.addEventListener("mousedown", (e) => {
-        if (!allowRotation) return;
-        mouseDown = true;
-        lastX = e.clientX;
-        lastY = e.clientY;
-      });
-      window.addEventListener("mouseup", () => (mouseDown = false));
-      window.addEventListener("mousemove", (e) => {
-        if (!mouseDown || !allowRotation) return;
-        group.rotation.y += (e.clientX - lastX) * 0.005;
-        group.rotation.x += (e.clientY - lastY) * 0.003;
-        lastX = e.clientX;
-        lastY = e.clientY;
-      });
+  <div class="code">
+    <div id="l1">while (left &lt;= right)</div>
+    <div id="l2">&nbsp;&nbsp;mid = (left + right) / 2</div>
+    <div id="l3">&nbsp;&nbsp;if (arr[mid] == target)</div>
+    <div id="l4">&nbsp;&nbsp;&nbsp;&nbsp;return mid</div>
+    <div id="l5">&nbsp;&nbsp;else if (arr[mid] &lt; target)</div>
+    <div id="l6">&nbsp;&nbsp;&nbsp;&nbsp;left = mid + 1</div>
+    <div id="l7">&nbsp;&nbsp;else</div>
+    <div id="l8">&nbsp;&nbsp;&nbsp;&nbsp;right = mid - 1</div>
+    <div id="l9">return -1</div>
+  </div>
+</div>
 
-      /* ---------- HELPERS ---------- */
-      function highlight(id) {
-        for (let i = 1; i <= 9; i++) {
-          const el = document.getElementById("l" + i);
-          el.style.background = "white";
-          el.style.fontWeight = "normal";
-        }
-        if (id) {
-          const el = document.getElementById(id);
-          el.style.background = "#cceeff";
-          el.style.fontWeight = "bold";
-        }
-      }
+<div id="complexity">
+  <table>
+    <thead>
+      <tr><th>Case</th><th>Time</th></tr>
+    </thead>
+    <tbody>
+      <tr id="bestRow"><td>Best</td><td>O(1)</td></tr>
+      <tr id="avgRow"><td>Average</td><td>O(log n)</td></tr>
+      <tr id="worstRow"><td>Worst</td><td>O(log n)</td></tr>
+      <tr><td>Space</td><td>O(1)</td></tr>
+    </tbody>
+  </table>
+</div>
 
-      function makeLabel(text) {
-        const c = document.createElement("canvas");
-        c.width = 128;
-        c.height = 64;
-        const ctx = c.getContext("2d");
-        ctx.fillStyle = "#00eaff";
-        ctx.font = "bold 36px Arial";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(text, 64, 32);
-        const t = new THREE.CanvasTexture(c);
-        const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t }));
-        s.scale.set(1.5, 0.75, 1);
-        return s;
-      }
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
 
-      function createBoxes() {
-        group.clear();
-        boxes = [];
-        labels = [];
-        const spacing = 2;
-        array.forEach((v, i) => {
-          const cube = new THREE.Mesh(
-            new THREE.BoxGeometry(1, 1, 1),
-            new THREE.MeshStandardMaterial({ color: 0x0077ff })
-          );
-          cube.position.x = i * spacing - ((array.length - 1) * spacing) / 2;
-          const lb = makeLabel(v);
-          lb.position.set(cube.position.x, 1.2, 0);
-          group.add(cube, lb);
-          boxes.push(cube);
-          labels.push(lb);
-        });
-      }
+<script>
+/* ---------- THREE ---------- */
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xffffff);
 
-      /* ---------- GENERATE ---------- */
-      function generate() {
-        running = false;
-        array = document
-          .getElementById("arrayInput")
-          .value.split(",")
-          .map(Number)
-          .sort((a, b) => a - b);
-        target = Number(document.getElementById("targetInput").value);
-        left = 0;
-        right = array.length - 1;
-        phase = 0;
-        createBoxes();
-        highlight(null);
-        document.getElementById("status").innerText = "Status: Ready";
-      }
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
+camera.position.set(0,6,16);
+camera.lookAt(0,0,0);
 
-      /* ---------- STEP ---------- */
-      function step() {
-        if (left > right) {
-          highlight("l9");
-          document.getElementById("status").innerText = "Not Found → return -1";
-          running = false;
-          return;
-        }
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.domElement.style.position="fixed";
+renderer.domElement.style.zIndex="1";
+document.body.appendChild(renderer.domElement);
 
-        if (phase === 0) {
-          highlight("l1");
-          phase = 1;
-        } else if (phase === 1) {
-          highlight("l2");
-          mid = Math.floor((left + right) / 2);
-          boxes.forEach((b) => b.material.color.set(0x0077ff));
-          boxes[mid].material.color.set(0xffff00);
-          phase = 2;
-        } else if (phase === 2) {
-          highlight("l3");
-          if (array[mid] === target) phase = 3;
-          else if (array[mid] < target) phase = 5;
-          else phase = 7;
-        } else if (phase === 3) {
-          highlight("l4");
-          boxes[mid].material.color.set(0x00ff00);
-          document.getElementById("status").innerText = "Found at index " + mid;
-          running = false;
-        } else if (phase === 5) {
-          highlight("l5");
-          phase = 6;
-        } else if (phase === 6) {
-          highlight("l6");
-          left = mid + 1;
-          phase = 0;
-        } else if (phase === 7) {
-          highlight("l7");
-          phase = 8;
-        } else if (phase === 8) {
-          highlight("l8");
-          right = mid - 1;
-          phase = 0;
-        }
-      }
+scene.add(new THREE.AmbientLight(0xffffff,0.8));
+const light=new THREE.DirectionalLight(0xffffff,1);
+light.position.set(5,10,5);
+scene.add(light);
 
-      /* ---------- CONTROLS ---------- */
-      function start() {
-        running = true;
-      }
-      function pause() {
-        running = false;
-      }
-      function reset() {
-        running = false;
-        generate();
-      }
+const group=new THREE.Group();
+scene.add(group);
 
-      /* ---------- ANIMATION LOOP ---------- */
-      function animate(time) {
-        requestAnimationFrame(animate);
+/* ---------- DATA ---------- */
+let array=[], target;
+let boxes=[], labels=[];
+let left=0, right=0, mid=0, phase=0;
+let iterCount=0, running=false, lastTime=0;
 
-        if (running) {
-          const speed = document.getElementById("speed").value;
-          const delay = 2100 - speed * 20; // same as bubble sort
-          if (time - lastTime > delay) {
-            step();
-            lastTime = time;
-          }
-        }
+/* ---------- ROTATION ---------- */
+let mouseDown=false, lastX=0, lastY=0, allowRotation=true;
+const panel=document.getElementById("panel");
 
-        labels.forEach((l) => l.lookAt(camera.position));
-        renderer.render(scene, camera);
-      }
-      animate();
+panel.addEventListener("mouseenter",()=>allowRotation=false);
+panel.addEventListener("mouseleave",()=>allowRotation=true);
 
-      /* ---------- RESIZE ---------- */
-      window.addEventListener("resize", () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      });
+window.addEventListener("mousedown",e=>{
+  if(!allowRotation) return;
+  mouseDown=true;
+  lastX=e.clientX; lastY=e.clientY;
+});
+window.addEventListener("mouseup",()=>mouseDown=false);
+window.addEventListener("mousemove",e=>{
+  if(!mouseDown || !allowRotation) return;
+  group.rotation.y+=(e.clientX-lastX)*0.005;
+  group.rotation.x+=(e.clientY-lastY)*0.003;
+  lastX=e.clientX; lastY=e.clientY;
+});
 
-      generate();
-    </script>
-  </body>
+/* ---------- HELPERS ---------- */
+function highlight(id){
+  for(let i=1;i<=9;i++){
+    const el=document.getElementById("l"+i);
+    if(el){
+      el.style.background="transparent";
+      el.style.fontWeight="normal";
+    }
+  }
+  if(id){
+    const el=document.getElementById(id);
+    el.style.background="#dbeafe";
+    el.style.fontWeight="bold";
+  }
+}
+
+function makeLabel(text){
+  const c=document.createElement("canvas");
+  c.width=128;c.height=64;
+  const ctx=c.getContext("2d");
+  ctx.fillStyle="#0077ff";
+  ctx.font="bold 36px Arial";
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
+  ctx.fillText(text,64,32);
+  const t=new THREE.CanvasTexture(c);
+  const s=new THREE.Sprite(new THREE.SpriteMaterial({map:t}));
+  s.scale.set(1.5,0.75,1);
+  return s;
+}
+
+function createBoxes(){
+  group.clear(); boxes=[]; labels=[];
+  const spacing=2;
+  array.forEach((v,i)=>{
+    const cube=new THREE.Mesh(
+      new THREE.BoxGeometry(1,1,1),
+      new THREE.MeshStandardMaterial({color:0x0077ff})
+    );
+    cube.position.x=i*spacing-((array.length-1)*spacing)/2;
+    const lb=makeLabel(v);
+    lb.position.set(cube.position.x,1.2,0);
+    group.add(cube,lb);
+    boxes.push(cube); labels.push(lb);
+  });
+}
+
+/* ---------- COMPLEXITY ---------- */
+function clearComplexityHighlight(){
+  ["bestRow","avgRow","worstRow"].forEach(id=>{
+    document.getElementById(id).classList.remove("active");
+  });
+}
+function updateComplexity(state, comps){
+  clearComplexityHighlight();
+  if(state==="searching") document.getElementById("avgRow").classList.add("active");
+  if(state==="found"){
+    if(comps===1) document.getElementById("bestRow").classList.add("active");
+    else document.getElementById("avgRow").classList.add("active");
+  }
+  if(state==="notfound") document.getElementById("worstRow").classList.add("active");
+}
+
+/* ---------- LOGIC ---------- */
+function generate(){
+  running=false;
+  array=document.getElementById("arrayInput").value.split(",").map(Number).sort((a,b)=>a-b);
+  target=Number(document.getElementById("targetInput").value);
+  left=0; right=array.length-1; phase=0; iterCount=0;
+  createBoxes();
+  highlight(null);
+  document.getElementById("status").innerText="Status: Ready";
+  updateComplexity("ready");
+}
+
+function step(){
+  if(left>right){
+    highlight("l9");
+    document.getElementById("status").innerText="Not Found → return -1";
+    updateComplexity("notfound");
+    running=false; return;
+  }
+
+  if(phase===0){ highlight("l1"); phase=1; }
+  else if(phase===1){
+    highlight("l2");
+    mid=Math.floor((left+right)/2);
+    boxes.forEach(b=>b.material.color.set(0x0077ff));
+    boxes[mid].material.color.set(0xffd700);
+    phase=2; updateComplexity("searching");
+  }
+  else if(phase===2){
+    highlight("l3"); iterCount++;
+    if(array[mid]===target) phase=3;
+    else if(array[mid]<target) phase=5;
+    else phase=7;
+  }
+  else if(phase===3){
+    highlight("l4");
+    boxes[mid].material.color.set(0x00cc66);
+    document.getElementById("status").innerText="Found at index "+mid;
+    updateComplexity("found",iterCount);
+    running=false;
+  }
+  else if(phase===5){ highlight("l5"); phase=6; }
+  else if(phase===6){ highlight("l6"); left=mid+1; phase=0; }
+  else if(phase===7){ highlight("l7"); phase=8; }
+  else if(phase===8){ highlight("l8"); right=mid-1; phase=0; }
+}
+
+/* ---------- CONTROLS ---------- */
+function start(){ running=true; }
+function pause(){ running=false; }
+function reset(){ running=false; generate(); }
+
+/* ---------- LOOP ---------- */
+function animate(time){
+  requestAnimationFrame(animate);
+  if(running){
+    const speed=document.getElementById("speed").value;
+    const delay=2100-speed*20;
+    if(time-lastTime>delay){ step(); lastTime=time; }
+  }
+  labels.forEach(l=>l.lookAt(camera.position));
+  renderer.render(scene,camera);
+}
+animate();
+
+window.addEventListener("resize",()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
+});
+
+generate();
+</script>
+
+</body>
 </html>

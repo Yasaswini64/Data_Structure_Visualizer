@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Binary Search Tree Visualization</title>
+<title>Binary Tree Visualization</title>
 
 <style>
 body {
@@ -12,7 +12,7 @@ body {
   font-family: "Segoe UI", sans-serif;
 }
 
-/* ===== BACK BUTTON ===== */
+/* BACK */
 .back-btn {
   position: fixed;
   top: 18px;
@@ -25,11 +25,9 @@ body {
   border-radius: 50%;
   z-index: 100;
 }
-.back-btn:hover {
-  background: rgba(0, 234, 255, 0.15);
-}
+.back-btn:hover { background: rgba(0,234,255,0.15); }
 
-/* ===== HEADER ===== */
+/* HEADER */
 header {
   position: fixed;
   top: 0;
@@ -43,18 +41,10 @@ header {
   justify-content: center;
   z-index: 50;
 }
-header .title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #00eaff;
-}
-header .subtitle {
-  font-size: 14px;
-  color: #b5f7ff;
-  margin-top: 4px;
-}
+header .title { font-size: 28px; font-weight: 700; color: #00eaff; }
+header .subtitle { font-size: 14px; color: #b5f7ff; }
 
-/* ===== CONTROL PANEL ===== */
+/* PANEL */
 #panel {
   position: fixed;
   top: 120px;
@@ -66,7 +56,6 @@ header .subtitle {
   padding: 16px;
   color: #fff;
   z-index: 40;
-  box-shadow: 0 0 30px rgba(0,234,255,0.15);
 }
 
 input, button {
@@ -76,15 +65,8 @@ input, button {
   border-radius: 8px;
   border: none;
 }
-input {
-  background: rgba(0,0,0,0.6);
-  color: #00eaff;
-}
-button {
-  font-weight: bold;
-  background: linear-gradient(135deg, #00eaff, #0077ff);
-  cursor: pointer;
-}
+input { background: rgba(0,0,0,0.6); color: #00eaff; }
+button { font-weight: bold; background: linear-gradient(135deg,#00eaff,#0077ff); }
 button:hover { opacity: 0.9; }
 
 #status {
@@ -96,28 +78,24 @@ button:hover { opacity: 0.9; }
   color: #00eaff;
 }
 
-/* ===== PSEUDO CODE (LEFT SIDE) ===== */
+/* PSEUDO */
 #pseudo {
   position: fixed;
   top: 420px;
   left: 20px;
   width: 280px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.85);
   border-radius: 14px;
   padding: 14px;
-  color: #b5f7ff;
   font-family: Consolas, monospace;
   font-size: 13px;
+  color: #b5f7ff;
   display: none;
   z-index: 40;
 }
-
-.line {
-  padding: 4px 6px;
-  border-radius: 6px;
-}
+.line { padding: 4px 6px; border-radius: 6px; }
 .line.active {
-  background: rgba(0,234,255,0.25);
+  background: rgba(0,234,255,0.35);
   color: #00ffff;
 }
 </style>
@@ -128,8 +106,8 @@ button:hover { opacity: 0.9; }
 <a href="trees.html" class="back-btn">←</a>
 
 <header>
-  <div class="title">Binary Search Tree</div>
-  <div class="subtitle">Insert, Search, Delete with Live Pseudocode</div>
+  <div class="title">Binary Tree</div>
+  <div class="subtitle">Insert • Search • Delete</div>
 </header>
 
 <div id="panel">
@@ -146,16 +124,20 @@ button:hover { opacity: 0.9; }
 <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
 
 <script>
-/* ---------- THREE ---------- */
+/* THREE */
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x111111);
 
-const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 1000);
 camera.position.set(0,14,26);
 camera.lookAt(0,0,0);
 
 const renderer = new THREE.WebGLRenderer({ antialias:true });
-renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(innerWidth, innerHeight);
+renderer.domElement.style.position="fixed";
+renderer.domElement.style.top="0";
+renderer.domElement.style.left="0";
+renderer.domElement.style.zIndex="1";
 document.body.appendChild(renderer.domElement);
 
 scene.add(new THREE.AmbientLight(0xffffff,0.9));
@@ -167,24 +149,24 @@ scene.add(group);
 let tree = [];
 let labels = [];
 
-/* ---------- STATUS ---------- */
+/* STATUS */
 function status(msg,color="#00eaff"){
   const s=document.getElementById("status");
   s.innerText=msg;
   s.style.color=color;
 }
 
-/* ---------- PSEUDO ---------- */
+/* PSEUDO */
 function showPseudo(lines){
-  const box=document.getElementById("pseudo");
-  box.innerHTML="";
-  box.style.display="block";
-  lines.forEach((l,i)=>{
-    const div=document.createElement("div");
-    div.className="line";
-    div.id="line"+i;
-    div.innerText=l;
-    box.appendChild(div);
+  const p=document.getElementById("pseudo");
+  p.innerHTML="";
+  p.style.display="block";
+  lines.forEach((t,i)=>{
+    const d=document.createElement("div");
+    d.className="line";
+    d.id="line"+i;
+    d.innerText=t;
+    p.appendChild(d);
   });
 }
 function highlight(i){
@@ -192,34 +174,36 @@ function highlight(i){
   const el=document.getElementById("line"+i);
   if(el) el.classList.add("active");
 }
+function hidePseudo(){ document.getElementById("pseudo").style.display="none"; }
 
-/* ---------- LABEL (FIXED) ---------- */
+/* ✅ FIXED LABEL — CENTERED & FIT */
 function createLabel(text){
-  const canvas=document.createElement("canvas");
-  canvas.width=256;
-  canvas.height=256;
-  const ctx=canvas.getContext("2d");
+  const c=document.createElement("canvas");
+  c.width=256; c.height=256;
+  const ctx=c.getContext("2d");
 
+  ctx.clearRect(0,0,256,256);
   ctx.fillStyle="#ffffff";
-  ctx.font="bold 140px Arial";
+  ctx.font="bold 96px Arial";        // SAME SIZE
   ctx.textAlign="center";
   ctx.textBaseline="middle";
-  ctx.fillText(text,128,128);
+  ctx.fillText(text,128,128);        // CENTERED
 
-  const texture=new THREE.CanvasTexture(canvas);
   const sprite=new THREE.Sprite(
     new THREE.SpriteMaterial({
-      map:texture,
+      map:new THREE.CanvasTexture(c),
+      transparent:true,
       depthTest:false
     })
   );
-  sprite.scale.set(2.2,2.2,1);
-  sprite.position.set(0,0,1.4); // 🔥 push in front
+
+  sprite.scale.set(1.6,1.6,1);       // FITS inside sphere
+  sprite.position.set(0,0,0.01);     // CENTERED
   labels.push(sprite);
   return sprite;
 }
 
-/* ---------- POSITION ---------- */
+/* POSITION */
 function getPos(i){
   const lvl=Math.floor(Math.log2(i+1));
   const off=i-(2**lvl-1);
@@ -230,62 +214,61 @@ function getPos(i){
   );
 }
 
-/* ---------- DRAW ---------- */
+/* DRAW */
 function drawTree(){
-  group.clear();
-  labels=[];
-
+  group.clear(); labels=[];
   tree.forEach((v,i)=>{
-    if(v==null) return;
-
-    const node=new THREE.Mesh(
+    const n=new THREE.Mesh(
       new THREE.SphereGeometry(1.2,32,32),
       new THREE.MeshStandardMaterial({color:0x0077ff})
     );
-    node.position.copy(getPos(i));
-    node.add(createLabel(v.toString()));
-    group.add(node);
+    n.position.copy(getPos(i));
+    n.add(createLabel(v));
+    group.add(n);
 
     if(i>0){
       const p=Math.floor((i-1)/2);
-      const g=new THREE.BufferGeometry().setFromPoints([getPos(p),getPos(i)]);
-      group.add(new THREE.Line(g,new THREE.LineBasicMaterial({color:0xffffff})));
+      group.add(new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints([getPos(p),getPos(i)]),
+        new THREE.LineBasicMaterial({color:0xffffff})
+      ));
     }
   });
 }
 
-/* ---------- INSERT ---------- */
+/* INSERT */
 async function insertNode(){
   const v=parseInt(valueInput.value);
   if(isNaN(v)) return;
 
   showPseudo([
     "IF root == NULL",
-    "CREATE newNode",
-    "IF key < root.value",
-    "GO LEFT",
-    "ELSE GO RIGHT",
-    "RETURN root"
+    "CREATE new node",
+    "COMPARE key",
+    "MOVE left/right",
+    "INSERT at NULL"
   ]);
 
   highlight(0); await delay();
-  tree.push(v);
   highlight(1); await delay();
+  tree.push(v);
   drawTree();
-  highlight(5);
+  highlight(4); await delay();
+
   status("Inserted "+v);
+  hidePseudo();
 }
 
-/* ---------- SEARCH ---------- */
+/* SEARCH */
 async function searchNode(){
   const v=parseInt(valueInput.value);
   if(isNaN(v)) return;
 
   showPseudo([
-    "IF root == NULL RETURN false",
-    "IF root.value == key RETURN true",
-    "IF key < root.value GO LEFT",
-    "ELSE GO RIGHT"
+    "IF root == NULL",
+    "COMPARE key",
+    "MOVE left/right",
+    "FOUND / NOT FOUND"
   ]);
 
   let found=false;
@@ -293,57 +276,56 @@ async function searchNode(){
     highlight(1); await delay();
     if(tree[i]===v){ found=true; break; }
   }
-  status(found?"Found "+v:"Not Found",found?"#00ff00":"#ff4444");
+
+  highlight(3); await delay();
+  status(found?`Found ${v}`:"Not Found",found?"#00ff00":"#ff4444");
+  hidePseudo();
 }
 
-/* ---------- DELETE ---------- */
+/* DELETE */
 async function deleteNode(){
   const v=parseInt(valueInput.value);
   if(isNaN(v)) return;
 
   showPseudo([
-    "IF root == NULL RETURN root",
-    "IF key < root.value GO LEFT",
-    "IF key > root.value GO RIGHT",
-    "CASE 1: NO CHILD",
-    "CASE 2: ONE CHILD",
-    "CASE 3: TWO CHILDREN"
+    "SEARCH node",
+    "CHECK children",
+    "REPLACE node",
+    "DELETE"
   ]);
 
-  let i=tree.indexOf(v);
-  if(i===-1){ status("Value not found","#ff4444"); return; }
+  const i=tree.indexOf(v);
+  if(i===-1){ status("Not Found","#ff4444"); hidePseudo(); return; }
 
-  highlight(3); await delay();
+  highlight(0); await delay();
+  highlight(2); await delay();
   tree[i]=tree[tree.length-1];
   tree.pop();
   drawTree();
+  highlight(3); await delay();
+
   status("Deleted "+v,"#ff4444");
+  hidePseudo();
 }
 
-/* ---------- RESET ---------- */
+/* RESET */
 function resetTree(){
   tree=[];
   group.clear();
-  document.getElementById("pseudo").style.display="none";
+  hidePseudo();
   status("Tree Reset");
 }
 
-/* ---------- UTIL ---------- */
+/* UTIL */
 function delay(){ return new Promise(r=>setTimeout(r,800)); }
 
-/* ---------- RENDER ---------- */
+/* RENDER */
 function animate(){
   requestAnimationFrame(animate);
-  labels.forEach(l=>l.lookAt(camera.position)); // 🔥 keep readable
+  labels.forEach(l=>l.lookAt(camera.position));
   renderer.render(scene,camera);
 }
 animate();
-
-window.addEventListener("resize",()=>{
-  camera.aspect=window.innerWidth/window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth,window.innerHeight);
-});
 </script>
 
 </body>

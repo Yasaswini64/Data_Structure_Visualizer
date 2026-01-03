@@ -11,6 +11,18 @@ body{
   font-family:"Segoe UI",sans-serif;
   overflow:hidden;
 }
+
+.back-btn{
+  position:fixed;
+  top:16px;
+  left:16px;
+  font-size:32px;
+  color:#00eaff;
+  text-decoration:none;
+  font-weight:700;
+  z-index:200;
+}
+
 header{
   position:absolute;
   top:0;
@@ -22,6 +34,7 @@ header{
   color:#00eaff;
   background:rgba(0,0,0,0.5);
 }
+
 #panel{
   position:absolute;
   top:80px;
@@ -33,6 +46,7 @@ header{
   padding:16px;
   color:#fff;
 }
+
 input,button{
   width:100%;
   margin-top:8px;
@@ -40,53 +54,73 @@ input,button{
   border-radius:8px;
   border:none;
 }
+
 input{background:rgba(0,0,0,0.6);color:#00eaff;}
 button{
   background:linear-gradient(135deg,#00eaff,#0077ff);
   font-weight:bold;
   cursor:pointer;
 }
+
 #status{
   margin-top:12px;
   text-align:center;
   color:#00eaff;
 }
+
+#code{
+  margin-top:14px;
+  background:#fff;
+  color:#000;
+  border-radius:10px;
+  padding:10px;
+  font-family:Consolas,monospace;
+  font-size:13px;
+}
+#code div{
+  padding:4px 6px;
+  border-radius:6px;
+}
+.active{background:#cceeff;font-weight:bold;}
+
 canvas{display:block;}
 </style>
 </head>
 
 <body>
+
+<a href="HomePage.html" class="back-btn">←</a>
 <header>MERGE SORT – DIVIDE → MERGE (TREE VIEW)</header>
 
 <div id="panel">
   <input id="arrayInput" value="38,27,43,3,9,82,10">
-
   <button onclick="start()">▶ Start</button>
-  <button onclick="togglePause()">⏸ Pause / Resume</button>
+  <button onclick="togglePause()">⏸ Pause</button>
   <button onclick="reset()">🔄 Reset</button>
-
-  <label>Speed</label>
-  <input id="speed" type="range" min="200" max="1500" value="700">
-
+  <input id="speed" type="range" min="300" max="1600" value="800">
   <div id="status">Ready</div>
+
+  <div id="code">
+    <div id="p1">mergeSort(arr)</div>
+    <div id="p2">if size ≤ 1 return</div>
+    <div id="p3">split array</div>
+    <div id="p4">mergeSort(left)</div>
+    <div id="p5">mergeSort(right)</div>
+    <div id="p6">merge(left, right)</div>
+  </div>
 </div>
 
 <canvas id="canvas"></canvas>
 
 <script>
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight;}
+resize(); addEventListener("resize",resize);
 
-function resize(){
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resize();
-window.addEventListener("resize",resize);
-
-/* ---------- DRAW HELPERS ---------- */
-function drawBox(x,y,text,color){
-  ctx.fillStyle=color;
+/* DRAW HELPERS */
+function box(x,y,t,c){
+  ctx.fillStyle=c;
   ctx.strokeStyle="#fff";
   ctx.lineWidth=1.5;
   ctx.fillRect(x-26,y-18,52,36);
@@ -95,9 +129,9 @@ function drawBox(x,y,text,color){
   ctx.font="bold 18px Arial";
   ctx.textAlign="center";
   ctx.textBaseline="middle";
-  ctx.fillText(text,x,y);
+  ctx.fillText(t,x,y);
 }
-function drawLine(x1,y1,x2,y2){
+function line(x1,y1,x2,y2){
   ctx.strokeStyle="#aaa";
   ctx.beginPath();
   ctx.moveTo(x1,y1);
@@ -105,99 +139,84 @@ function drawLine(x1,y1,x2,y2){
   ctx.stroke();
 }
 
-/* ---------- STATE ---------- */
-let steps = [];
-let stepIndex = 0;
-let timer = null;
-let paused = false;
+/* CODE HIGHLIGHT */
+function hl(id){
+  ["p1","p2","p3","p4","p5","p6"].forEach(x=>{
+    document.getElementById(x).classList.remove("active");
+  });
+  if(id) document.getElementById(id).classList.add("active");
+}
 
-/* ---------- MERGE SORT STEP GENERATOR ---------- */
-function mergeSort(arr,x,y,level,parent){
-  const node = { arr:[...arr], x,y,parent, level, type:"split" };
-  steps.push(node);
+/* STEPS */
+let steps=[], idx=0, timer=null, paused=false;
 
-  if(arr.length <= 1) return arr;
+/* CORE FIXED MERGE SORT */
+function mergeSort(arr,x,y,level){
+  steps.push({t:"code",l:"p1"});
+  steps.push({t:"draw",arr:[...arr],x,y,c:"#0077ff"});
 
-  const mid = Math.floor(arr.length / 2);
-  const gap = 220 / (level + 1);
+  if(arr.length<=1){
+    steps.push({t:"code",l:"p2"});
+    return arr;
+  }
 
-  const left  = mergeSort(arr.slice(0,mid), x-gap, y+90, level+1, node);
-  const right = mergeSort(arr.slice(mid), x+gap, y+90, level+1, node);
+  steps.push({t:"code",l:"p3"});
+  const mid=Math.floor(arr.length/2);
+  const gap=260/(level+1);
 
-  const merged=[];
+  const leftX=x-gap, rightX=x+gap;
+  const childY=y+90;
+
+  // 🔥 VISUAL SPLIT
+  steps.push({t:"draw",arr:arr.slice(0,mid),x:leftX,y:childY,c:"#3399ff",px:x,py:y});
+  steps.push({t:"draw",arr:arr.slice(mid),x:rightX,y:childY,c:"#3399ff",px:x,py:y});
+
+  steps.push({t:"code",l:"p4"});
+  const L=mergeSort(arr.slice(0,mid),leftX,childY,level+1);
+
+  steps.push({t:"code",l:"p5"});
+  const R=mergeSort(arr.slice(mid),rightX,childY,level+1);
+
+  steps.push({t:"code",l:"p6"});
+  const M=[];
   let i=0,j=0;
-  while(i<left.length && j<right.length){
-    merged.push(left[i] <= right[j] ? left[i++] : right[j++]);
-  }
-  while(i<left.length) merged.push(left[i++]);
-  while(j<right.length) merged.push(right[j++]);
+  while(i<L.length && j<R.length)
+    M.push(L[i]<=R[j]?L[i++]:R[j++]);
+  while(i<L.length) M.push(L[i++]);
+  while(j<R.length) M.push(R[j++]);
 
-  steps.push({
-    arr: merged,
-    x,y,
-    parent,
-    level,
-    type:"merge"
-  });
-
-  return merged;
+  steps.push({t:"draw",arr:M,x,y,c:"#00ff88"});
+  return M;
 }
 
-/* ---------- RENDER STEP ---------- */
-function renderStep(){
+/* RENDER */
+function render(){
   if(paused) return;
-
-  if(stepIndex >= steps.length){
-    document.getElementById("status").innerText = "Sorting Complete";
-    clearInterval(timer);
-    timer = null;
-    return;
+  if(idx>=steps.length){
+    status.innerText="Sorting Complete";
+    clearInterval(timer); return;
   }
-
-  const n = steps[stepIndex++];
-
-  if(n.parent){
-    drawLine(n.parent.x,n.parent.y+20,n.x,n.y-20);
-  }
-
-  const spacing = 65;
-  const startX = n.x - ((n.arr.length-1) * spacing) / 2;
-  const color = n.type === "merge" ? "#00ff88" : "#0077ff";
-
-  n.arr.forEach((v,i)=>{
-    drawBox(startX + i*spacing, n.y, v, color);
-  });
+  const s=steps[idx++];
+  if(s.t==="code"){ hl(s.l); return; }
+  if(s.px!==undefined) line(s.px,s.py+20,s.x,s.y-20);
+  const sp=60, sx=s.x-((s.arr.length-1)*sp)/2;
+  s.arr.forEach((v,i)=>box(sx+i*sp,s.y,v,s.c));
 }
 
-/* ---------- CONTROLS ---------- */
+/* CONTROLS */
 function start(){
   reset();
-  const arr = document.getElementById("arrayInput").value
-    .split(",").map(Number).filter(n=>!isNaN(n));
-  if(!arr.length) return alert("Invalid input");
-
-  document.getElementById("status").innerText = "Sorting...";
-  mergeSort(arr, canvas.width/2, 120, 0, null);
-
-  const speed = document.getElementById("speed").value;
-  timer = setInterval(renderStep, speed);
+  const arr=arrayInput.value.split(",").map(Number).filter(n=>!isNaN(n));
+  if(!arr.length) return;
+  status.innerText="Sorting...";
+  mergeSort(arr,canvas.width/2,140,0);
+  timer=setInterval(render,speed.value);
 }
-
-function togglePause(){
-  if(!timer) return;
-  paused = !paused;
-  document.getElementById("status").innerText =
-    paused ? "Paused" : "Sorting...";
-}
-
+function togglePause(){ paused=!paused; status.innerText=paused?"Paused":"Sorting..."; }
 function reset(){
-  clearInterval(timer);
-  timer = null;
-  paused = false;
+  clearInterval(timer); timer=null; paused=false;
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  steps = [];
-  stepIndex = 0;
-  document.getElementById("status").innerText = "Ready";
+  steps=[]; idx=0; hl(null); status.innerText="Ready";
 }
 </script>
 </body>

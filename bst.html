@@ -12,7 +12,7 @@ body {
   font-family: "Segoe UI", sans-serif;
 }
 
-/* ===== BACK BUTTON ===== */
+/* BACK BUTTON */
 .back-btn {
   position: fixed;
   top: 18px;
@@ -25,18 +25,15 @@ body {
   border-radius: 50%;
   z-index: 100;
 }
+.back-btn:hover { background: rgba(0,234,255,0.15); }
 
-.back-btn:hover {
-  background: rgba(0, 234, 255, 0.15);
-}
-
-/* ===== HEADER ===== */
+/* HEADER */
 header {
   position: fixed;
   top: 0;
   width: 100%;
   height: 90px;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0,0,0,0.7);
   backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
@@ -44,32 +41,21 @@ header {
   justify-content: center;
   z-index: 50;
 }
+header .title { font-size: 28px; font-weight: 700; color: #00eaff; }
+header .subtitle { font-size: 14px; color: #b5f7ff; }
 
-header .title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #00eaff;
-}
-
-header .subtitle {
-  font-size: 14px;
-  color: #b5f7ff;
-  margin-top: 4px;
-}
-
-/* ===== CONTROL PANEL ===== */
+/* PANEL */
 #panel {
   position: fixed;
   top: 120px;
   left: 20px;
   width: 280px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255,255,255,0.08);
   backdrop-filter: blur(10px);
   border-radius: 14px;
   padding: 16px;
   color: #fff;
   z-index: 40;
-  box-shadow: 0 0 30px rgba(0, 234, 255, 0.15);
 }
 
 input, button {
@@ -79,45 +65,51 @@ input, button {
   border-radius: 8px;
   border: none;
 }
-
-input {
-  background: rgba(0, 0, 0, 0.6);
-  color: #00eaff;
-}
-
-button {
-  font-weight: bold;
-  background: linear-gradient(135deg, #00eaff, #0077ff);
-  cursor: pointer;
-}
-
-button:hover {
-  opacity: 0.9;
-}
+input { background: rgba(0,0,0,0.6); color: #00eaff; }
+button { font-weight: bold; background: linear-gradient(135deg,#00eaff,#0077ff); }
+button:hover { opacity: 0.9; }
 
 #status {
   margin-top: 12px;
   padding: 8px;
   text-align: center;
   font-weight: bold;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0,0,0,0.5);
   color: #00eaff;
+}
+
+/* PSEUDO */
+#pseudo {
+  position: fixed;
+  top: 420px;
+  left: 20px;
+  width: 280px;
+  background: rgba(0,0,0,0.85);
+  border-radius: 14px;
+  padding: 14px;
+  font-family: Consolas, monospace;
+  font-size: 13px;
+  color: #b5f7ff;
+  display: none;
+  z-index: 40;
+}
+.line { padding: 4px 6px; border-radius: 6px; }
+.line.active {
+  background: rgba(0,234,255,0.35);
+  color: #00ffff;
 }
 </style>
 </head>
 
 <body>
 
-<!-- Back Button -->
 <a href="trees.html" class="back-btn">←</a>
 
-<!-- Header -->
 <header>
   <div class="title">Binary Search Tree</div>
-  <div class="subtitle">Insert, search, and delete in a BST</div>
+  <div class="subtitle">Insert • Search • Delete </div>
 </header>
 
-<!-- Control Panel -->
 <div id="panel">
   <input id="valueInput" placeholder="Enter value" />
   <button onclick="insertBST()">Insert</button>
@@ -127,209 +119,265 @@ button:hover {
   <div id="status">Status: Ready</div>
 </div>
 
+<div id="pseudo"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
 
 <script>
-/* ---------- SCENE ---------- */
+/* ---------- THREE ---------- */
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x111111);
 
-const camera = new THREE.PerspectiveCamera(
-  60,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-);
-camera.position.set(0, 18, 30);
-camera.lookAt(0, 0, 0);
+const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 1000);
+camera.position.set(0,18,30);
+camera.lookAt(0,0,0);
 
-/* ---------- RENDERER ---------- */
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.domElement.style.position = "fixed";
-renderer.domElement.style.top = "0";
-renderer.domElement.style.left = "0";
-renderer.domElement.style.zIndex = "1";
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.domElement.style.position="fixed";
+renderer.domElement.style.zIndex="1";
 document.body.appendChild(renderer.domElement);
 
-scene.add(new THREE.AmbientLight(0xffffff, 1));
-scene.add(new THREE.DirectionalLight(0xffffff, 1));
+scene.add(new THREE.AmbientLight(0xffffff,1));
+scene.add(new THREE.DirectionalLight(0xffffff,1));
 
 /* ---------- DATA ---------- */
 class Node {
-  constructor(val) {
+  constructor(val){
     this.val = val;
     this.left = null;
     this.right = null;
     this.mesh = null;
   }
 }
-
 let root = null;
 const group = new THREE.Group();
 scene.add(group);
 
 /* ---------- STATUS ---------- */
-function status(msg, color = "#00eaff") {
-  const s = document.getElementById("status");
-  s.innerText = msg;
-  s.style.color = color;
+function status(msg,color="#00eaff"){
+  const s=document.getElementById("status");
+  s.innerText=msg;
+  s.style.color=color;
 }
 
+/* ---------- PSEUDO ---------- */
+function showPseudo(lines){
+  const p=document.getElementById("pseudo");
+  p.innerHTML="";
+  p.style.display="block";
+  lines.forEach((t,i)=>{
+    const d=document.createElement("div");
+    d.className="line";
+    d.id="line"+i;
+    d.innerText=t;
+    p.appendChild(d);
+  });
+}
+function highlight(i){
+  document.querySelectorAll(".line").forEach(l=>l.classList.remove("active"));
+  const el=document.getElementById("line"+i);
+  if(el) el.classList.add("active");
+}
+function hidePseudo(){ document.getElementById("pseudo").style.display="none"; }
+function delay(){ return new Promise(r=>setTimeout(r,800)); }
+
 /* ---------- LABEL ---------- */
-function createLabel(text) {
-  const canvas = document.createElement("canvas");
-  canvas.width = 256;
-  canvas.height = 256;
-  const ctx = canvas.getContext("2d");
+function createLabel(text){
+  const c=document.createElement("canvas");
+  c.width=256; c.height=256;
+  const ctx=c.getContext("2d");
+  ctx.fillStyle="#fff";
+  ctx.font="bold 130px Arial";
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
+  ctx.fillText(text,128,128);
 
-  ctx.fillStyle = "#ffffff";
-  ctx.font = "bold 130px Arial";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(text, 128, 128);
-
-  const texture = new THREE.CanvasTexture(canvas);
-  const sprite = new THREE.Sprite(
-    new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false })
+  const s=new THREE.Sprite(
+    new THREE.SpriteMaterial({ map:new THREE.CanvasTexture(c), depthTest:false })
   );
-  sprite.scale.set(1.8, 1.8, 1);
-  return sprite;
+  s.scale.set(1.8,1.8,1);
+  return s;
 }
 
 /* ---------- NODE ---------- */
-function createNodeMesh(val) {
-  const mesh = new THREE.Mesh(
-    new THREE.SphereGeometry(1.4, 42, 42),
-    new THREE.MeshStandardMaterial({ color: 0x0077ff })
+function createNodeMesh(val){
+  const m=new THREE.Mesh(
+    new THREE.SphereGeometry(1.4,42,42),
+    new THREE.MeshStandardMaterial({color:0x0077ff})
   );
-  mesh.add(createLabel(val.toString()));
-  return mesh;
+  m.add(createLabel(val));
+  return m;
 }
 
-/* ---------- DRAW TREE ---------- */
-function drawTree() {
+/* ---------- DRAW ---------- */
+function drawTree(){
   group.clear();
-  if (!root) return;
+  if(!root) return;
 
-  const queue = [[root, 0, 0]];
-  const pos = new Map();
+  const q=[[root,0,0]];
+  const pos=new Map();
 
-  while (queue.length) {
-    const [node, depth, x] = queue.shift();
-    pos.set(node, { x, y: 6 - depth * 3 });
-
-    const gap = 10 / (depth + 2);
-    if (node.left) queue.push([node.left, depth + 1, x - gap]);
-    if (node.right) queue.push([node.right, depth + 1, x + gap]);
+  while(q.length){
+    const [n,d,x]=q.shift();
+    pos.set(n,{x,y:6-d*3});
+    const g=10/(d+2);
+    if(n.left) q.push([n.left,d+1,x-g]);
+    if(n.right) q.push([n.right,d+1,x+g]);
   }
 
-  function edge(a, b) {
-    const pa = pos.get(a);
-    const pb = pos.get(b);
-    const geo = new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(pa.x, pa.y, 0),
-      new THREE.Vector3(pb.x, pb.y, 0),
-    ]);
-    group.add(new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0xffffff })));
+  function edge(a,b){
+    const pa=pos.get(a), pb=pos.get(b);
+    group.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(pa.x,pa.y,0),
+        new THREE.Vector3(pb.x,pb.y,0)
+      ]),
+      new THREE.LineBasicMaterial({color:0xffffff})
+    ));
   }
 
-  function render(node) {
-    if (!node) return;
-    const p = pos.get(node);
-    node.mesh = createNodeMesh(node.val);
-    node.mesh.position.set(p.x, p.y, 0);
-    group.add(node.mesh);
-
-    if (node.left) edge(node, node.left);
-    if (node.right) edge(node, node.right);
-
-    render(node.left);
-    render(node.right);
+  function render(n){
+    if(!n) return;
+    const p=pos.get(n);
+    n.mesh=createNodeMesh(n.val.toString());
+    n.mesh.position.set(p.x,p.y,0);
+    group.add(n.mesh);
+    if(n.left) edge(n,n.left);
+    if(n.right) edge(n,n.right);
+    render(n.left); render(n.right);
   }
-
   render(root);
 }
 
-/* ---------- BST OPERATIONS ---------- */
-function insertNode(node, val) {
-  if (!node) return new Node(val);
-  if (val < node.val) node.left = insertNode(node.left, val);
-  else if (val > node.val) node.right = insertNode(node.right, val);
-  return node;
-}
+/* ---------- INSERT ---------- */
+async function insertBST(){
+  const v=parseInt(valueInput.value);
+  if(isNaN(v)) return;
 
-function insertBST() {
-  const v = parseInt(valueInput.value);
-  if (isNaN(v)) return;
-  root = insertNode(root, v);
-  drawTree();
-  status("Inserted " + v);
-}
+  showPseudo([
+    "IF root == NULL",
+    "CREATE new node",
+    "IF key < root.data → LEFT",
+    "ELSE IF key > root.data → RIGHT",
+    "RETURN root"
+  ]);
 
-function searchNode(node, val) {
-  if (!node) return false;
-  node.mesh.material.color.set(0xffaa00);
-  if (node.val === val) {
-    node.mesh.material.color.set(0x00ff00);
-    return true;
+  if(!root){
+    highlight(0); await delay();
+    highlight(1); await delay();
+    root=new Node(v);
+    drawTree();
+    highlight(4); await delay();
+    hidePseudo();
+    status("Inserted "+v);
+    return;
   }
-  return val < node.val ? searchNode(node.left, val) : searchNode(node.right, val);
-}
 
-function searchBST() {
-  const v = parseInt(valueInput.value);
-  if (isNaN(v)) return;
-  drawTree();
-  const found = searchNode(root, v);
-  status(found ? "Found " + v : "Not Found", found ? "#00ff00" : "#ff4444");
-}
-
-function minValue(node) {
-  while (node.left) node = node.left;
-  return node;
-}
-
-function deleteNode(node, val) {
-  if (!node) return null;
-  if (val < node.val) node.left = deleteNode(node.left, val);
-  else if (val > node.val) node.right = deleteNode(node.right, val);
-  else {
-    if (!node.left) return node.right;
-    if (!node.right) return node.left;
-    const t = minValue(node.right);
-    node.val = t.val;
-    node.right = deleteNode(node.right, t.val);
+  let cur=root;
+  while(true){
+    highlight(2); await delay();
+    if(v < cur.val){
+      if(!cur.left){ cur.left=new Node(v); break; }
+      cur=cur.left;
+    }else{
+      highlight(3); await delay();
+      if(!cur.right){ cur.right=new Node(v); break; }
+      cur=cur.right;
+    }
   }
-  return node;
-}
 
-function deleteBST() {
-  const v = parseInt(valueInput.value);
-  if (isNaN(v)) return;
-  root = deleteNode(root, v);
+  highlight(4); await delay();
   drawTree();
-  status("Deleted " + v, "#ff4444");
+  hidePseudo();
+  status("Inserted "+v);
 }
 
-function resetTree() {
-  root = null;
+/* ---------- SEARCH ---------- */
+async function searchBST(){
+  const v=parseInt(valueInput.value);
+  if(isNaN(v)) return;
+
+  showPseudo([
+    "IF root == NULL → RETURN NULL",
+    "IF root.data == key → RETURN root",
+    "IF key < root.data → LEFT",
+    "ELSE → RIGHT"
+  ]);
+
+  drawTree();
+  let cur=root, found=false;
+
+  while(cur){
+    highlight(1); await delay();
+    cur.mesh.material.color.set(0xffaa00);
+
+    if(cur.val===v){
+      cur.mesh.material.color.set(0x00ff00);
+      found=true;
+      break;
+    }
+
+    if(v < cur.val){
+      highlight(2); await delay();
+      cur=cur.left;
+    }else{
+      highlight(3); await delay();
+      cur=cur.right;
+    }
+  }
+
+  status(found?"Found "+v:"Not Found",found?"#00ff00":"#ff4444");
+  hidePseudo();
+}
+
+/* ---------- DELETE ---------- */
+async function deleteBST(){
+  const v=parseInt(valueInput.value);
+  if(isNaN(v)) return;
+
+  showPseudo([
+    "SEARCH node",
+    "CHECK children",
+    "REPLACE / REMOVE",
+    "RETURN root"
+  ]);
+
+  root=(function del(n,val){
+    if(!n) return null;
+    if(val<n.val) n.left=del(n.left,val);
+    else if(val>n.val) n.right=del(n.right,val);
+    else{
+      if(!n.left) return n.right;
+      if(!n.right) return n.left;
+      let t=n.right;
+      while(t.left) t=t.left;
+      n.val=t.val;
+      n.right=del(n.right,t.val);
+    }
+    return n;
+  })(root,v);
+
+  highlight(3); await delay();
+  drawTree();
+  hidePseudo();
+  status("Deleted "+v,"#ff4444");
+}
+
+/* ---------- RESET ---------- */
+function resetTree(){
+  root=null;
   group.clear();
+  hidePseudo();
   status("Tree Reset");
 }
 
 /* ---------- RENDER ---------- */
-function animate() {
+function animate(){
   requestAnimationFrame(animate);
-  renderer.render(scene, camera);
+  renderer.render(scene,camera);
 }
 animate();
-
-window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
 </script>
 
 </body>

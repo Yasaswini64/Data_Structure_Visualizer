@@ -5,80 +5,50 @@
 <title>Doubly Linked List Visualizer</title>
 
 <style>
-* {
-  box-sizing: border-box;
-}
+/* ===== SAME VISUAL STYLE AS SINGLE LINKED LIST ===== */
+* { box-sizing: border-box; }
 
-/* ================= BODY ================= */
 body {
   margin: 0;
   font-family: "Segoe UI", sans-serif;
   background: #f6f9fc;
-  color: #1f2937;
 }
 
-/* ================= BACK BUTTON ================= */
 .back-btn {
   position: fixed;
   top: 16px;
   left: 16px;
-  text-decoration: none;
-  border: none;
-  background: none;
   font-size: 34px;
-  padding: 8px 14px;
   font-weight: 700;
   color: #2563eb;
-  cursor: pointer;
-  border-radius: 50%;
-  z-index: 1000;
-  transition: transform 0.2s ease, background 0.2s ease;
+  text-decoration: none;
 }
 
-.back-btn:hover {
-  transform: scale(1.15);
-  background: rgba(37, 99, 235, 0.1);
-}
-
-/* ================= HEADER ================= */
 .header-bar {
+  height: 80px;
+  background: #ffffff;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80px;
-  background: #ffffff;
   border-bottom: 1px solid #e5e7eb;
 }
-
 .header-bar h1 {
-  margin: 0;
   font-size: 36px;
-  font-weight: 700;
   color: #1d4ed8;
 }
 
-/* ================= MAIN LAYOUT ================= */
 .main {
   max-width: 1400px;
   margin: 40px auto;
-  padding: 0 24px;
   display: grid;
   grid-template-columns: 360px 1fr;
   gap: 28px;
 }
 
-/* ================= CONTROL PANEL ================= */
 #panel {
   background: #ffffff;
-  border-radius: 16px;
   padding: 22px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-}
-
-#panel h3 {
-  margin-top: 0;
-  font-size: 20px;
-  margin-bottom: 16px;
+  border-radius: 16px;
 }
 
 input, button {
@@ -87,11 +57,6 @@ input, button {
   padding: 12px;
   border-radius: 10px;
   border: 1px solid #d1d5db;
-  font-size: 14px;
-}
-
-input {
-  outline: none;
 }
 
 button {
@@ -99,45 +64,49 @@ button {
   color: white;
   border: none;
   font-weight: 600;
-  cursor: pointer;
-}
-
-button:hover {
-  background: #1d4ed8;
 }
 
 #status {
   margin-top: 14px;
   padding: 10px;
-  border-radius: 8px;
   background: #eff6ff;
   color: #1d4ed8;
-  font-weight: 600;
   text-align: center;
+  border-radius: 8px;
+  font-weight: 600;
 }
 
-/* ================= VISUALIZATION CARD ================= */
+/* CODE PANEL */
+#codePanel {
+  margin-top: 14px;
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  font-family: Consolas, monospace;
+}
+.code-line {
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+.active {
+  background: #cceeff;
+  font-weight: bold;
+}
+
+/* VISUAL */
 .visual-card {
   background: #ffffff;
-  border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  border-radius: 16px;
 }
 
-.visual-card h3 {
-  margin-top: 0;
-  font-size: 20px;
-  margin-bottom: 20px;
-}
-
-/* ================= VISUALIZATION ================= */
 #visual {
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  min-height: 220px;
   padding-left: 40px;
+  min-height: 220px;
+  transition: transform 0.4s ease;
 }
 
 /* HEAD */
@@ -149,16 +118,13 @@ button:hover {
   flex-direction: column;
   align-items: center;
 }
-
 #head span {
   background: #16a34a;
   color: white;
-  font-size: 12px;
   padding: 4px 8px;
   border-radius: 6px;
-  font-weight: 700;
+  font-size: 12px;
 }
-
 #head-arrow {
   width: 18px;
   height: 18px;
@@ -168,7 +134,7 @@ button:hover {
   margin-top: 4px;
 }
 
-/* NODE */
+/* NODE (same as single LL) */
 .node {
   display: flex;
   border-radius: 12px;
@@ -176,27 +142,25 @@ button:hover {
   margin-right: 14px;
   background: #3b82f6;
   box-shadow: 0 6px 18px rgba(59,130,246,0.35);
+  transition: background 0.3s;
 }
 
-/* PREV | DATA | NEXT */
 .prev, .data, .next {
-  width: 70px;
+  width: 90px;
   height: 60px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  font-weight: bold;
-  font-size: 14px;
+  align-items: center;
   color: white;
 }
 
 .data {
-  font-size: 20px;
+  font-size: 22px;
+  font-weight: bold;
   border-left: 2px solid rgba(255,255,255,0.4);
   border-right: 2px solid rgba(255,255,255,0.4);
 }
 
-/* ARROW */
 .arrow {
   font-size: 36px;
   margin: 0 16px;
@@ -207,113 +171,242 @@ button:hover {
 
 <body>
 
-<!-- BACK BUTTON -->
 <a class="back-btn" href="linkedlist.html">←</a>
 
-<!-- HEADER -->
 <div class="header-bar">
   <h1>Doubly Linked List</h1>
 </div>
 
 <div class="main">
 
-  <!-- CONTROLS -->
-  <div id="panel">
-    <h3>Controls</h3>
-    <input id="valueInput" placeholder="Enter value" />
-    <button onclick="insert()">Insert</button>
-    <button onclick="deleteNode()">Delete</button>
-    <button onclick="search()">Search</button>
-    <button onclick="resetList()">Reset</button>
-    <div id="status">Linked List is Empty</div>
-  </div>
+<div id="panel">
+  <input id="valueInput" placeholder="Enter value" />
+  <button onclick="startInsert()">Insert</button>
+  <button onclick="startDelete()">Delete</button>
+  <button onclick="startSearch()">Search</button>
+  <button onclick="resetList()">Reset</button>
 
-  <!-- VISUALIZATION -->
-  <div class="visual-card">
-    <h3>Visualization</h3>
-    <div id="visual"></div>
-  </div>
+  <div id="status">Ready</div>
+  <div id="codePanel"></div>
+</div>
+
+<div class="visual-card">
+  <h3>Visualization</h3>
+  <div id="visual"></div>
+</div>
 
 </div>
 
 <script>
 let list = [];
+let timer = null;
+let idx = 0;
+let phase = 0;
+let key = "";
 
-function render() {
-  const visual = document.getElementById("visual");
-  visual.innerHTML = "";
+/* ===== PSEUDOCODES ===== */
+const codeMap = {
+  insert: [
+    "create new node",
+    "if head == null",
+    "head = new node",
+    "else",
+    "traverse to last",
+    "link new node"
+  ],
+  delete: [
+    "if head == null",
+    "current = head",
+    "if current.data == key",
+    "unlink node",
+    "move current",
+    "key not found"
+  ],
+  search: [
+    "current = head",
+    "if current.data == key",
+    "mark node found",
+    "move to next",
+    "return not found"
+  ]
+};
 
-  if (list.length === 0) {
-    document.getElementById("status").innerText = "Linked List is Empty";
-    return;
-  }
+function showCode(type) {
+  codePanel.innerHTML = "";
+  codeMap[type].forEach((l,i)=>{
+    const d=document.createElement("div");
+    d.className="code-line";
+    d.id="c"+i;
+    d.innerText=l;
+    codePanel.appendChild(d);
+  });
+}
+function highlight(i){
+  document.querySelectorAll(".code-line").forEach(d=>d.classList.remove("active"));
+  const el=document.getElementById("c"+i);
+  if(el) el.classList.add("active");
+}
 
-  const head = document.createElement("div");
-  head.id = "head";
-  head.innerHTML = `
-    <span>HEAD</span>
-    <div id="head-arrow"></div>
-  `;
+/* ===== RENDER ===== */
+function render(){
+  visual.innerHTML="";
+  if(!list.length) return;
+
+  const head=document.createElement("div");
+  head.id="head";
+  head.innerHTML=`<span>HEAD</span><div id="head-arrow"></div>`;
   visual.appendChild(head);
 
-  list.forEach((val, i) => {
-    const node = document.createElement("div");
-    node.className = "node";
-
-    node.innerHTML = `
-      <div class="prev">${i === 0 ? "NULL" : "PREV"}</div>
-      <div class="data">${val}</div>
-      <div class="next">${i === list.length - 1 ? "NULL" : "NEXT"}</div>
+  list.forEach((v,i)=>{
+    const node=document.createElement("div");
+    node.className="node";
+    node.innerHTML=`
+      <div class="prev">${i===0?"NULL":"PREV"}</div>
+      <div class="data">${v}</div>
+      <div class="next">${i===list.length-1?"NULL":"NEXT"}</div>
     `;
     visual.appendChild(node);
 
-    if (i !== list.length - 1) {
-      const arrow = document.createElement("div");
-      arrow.className = "arrow";
-      arrow.innerHTML = "↔";
+    if(i!==list.length-1){
+      const arrow=document.createElement("div");
+      arrow.className="arrow";
+      arrow.innerText="→";
       visual.appendChild(arrow);
     }
   });
 }
 
-function insert() {
-  const val = document.getElementById("valueInput").value;
-  if (!val) return;
-  list.push(val);
-  document.getElementById("status").innerText = `Inserted ${val}`;
-  render();
+/* ================= INSERT ================= */
+function startInsert(){
+  key=valueInput.value;
+  if(!key) return;
+
+  idx=0; phase=0;
+  showCode("insert");
+  clearInterval(timer);
+
+  timer=setInterval(()=>{
+    if(phase===0){ highlight(0); phase=1; }
+    else if(phase===1){
+      highlight(1);
+      phase = list.length===0 ? 2 : 3;
+    }
+    else if(phase===2){
+      highlight(2);
+      list.push(key);
+      render();
+      status.innerText=`Inserted ${key}`;
+      clearInterval(timer);
+    }
+    else if(phase===3){
+      highlight(4);
+      phase=4;
+    }
+    else if(phase===4){
+      highlight(5);
+      list.push(key);
+      render();
+      status.innerText=`Inserted ${key}`;
+      clearInterval(timer);
+    }
+  },700);
 }
 
-function deleteNode() {
-  const val = document.getElementById("valueInput").value;
-  if (!val) return;
+/* ================= DELETE ================= */
+function startDelete(){
+  key=valueInput.value;
+  if(!key) return;
 
-  const index = list.indexOf(val);
-  if (index === -1) {
-    document.getElementById("status").innerText = `${val} not found`;
-    return;
-  }
+  idx=0; phase=0;
+  showCode("delete");
+  clearInterval(timer);
 
-  list.splice(index, 1);
-  document.getElementById("status").innerText = `Deleted ${val}`;
-  render();
+  timer=setInterval(()=>{
+    if(list.length===0){
+      highlight(0);
+      status.innerText="List is empty";
+      clearInterval(timer);
+      return;
+    }
+
+    if(idx>=list.length){
+      highlight(5);
+      status.innerText=`${key} not found`;
+      clearInterval(timer);
+      return;
+    }
+
+    if(phase===0){ highlight(1); phase=1; }
+    else if(phase===1){
+      highlight(2);
+      if(list[idx]==key) phase=2;
+      else phase=3;
+    }
+    else if(phase===2){
+      highlight(3);
+      list.splice(idx,1);
+      render();
+      status.innerText=`Deleted ${key}`;
+      clearInterval(timer);
+    }
+    else if(phase===3){
+      highlight(4);
+      idx++; phase=0;
+    }
+  },700);
 }
 
-function search() {
-  const val = document.getElementById("valueInput").value;
-  if (!val) return;
+/* ================= SEARCH ================= */
+function startSearch(){
+  key=valueInput.value;
+  if(!key) return;
 
-  const index = list.indexOf(val);
-  document.getElementById("status").innerText =
-    index === -1 ? `${val} not found` : `${val} found at position ${index}`;
+  idx=0; phase=0;
+  showCode("search");
+  clearInterval(timer);
+
+  timer=setInterval(()=>{
+    const nodes=document.querySelectorAll(".node");
+
+    if(idx>=nodes.length){
+      highlight(4);
+      status.innerText=`${key} not found`;
+      clearInterval(timer);
+      return;
+    }
+
+    nodes.forEach(n=>n.style.background="#3b82f6");
+
+    if(phase===0){ highlight(0); phase=1; }
+    else if(phase===1){
+      highlight(1);
+      nodes[idx].style.background="#facc15";
+      if(list[idx]==key) phase=2;
+      else phase=3;
+    }
+    else if(phase===2){
+      highlight(2);
+      nodes[idx].style.background="#22c55e";
+      visual.style.transform="translateY(40px)";
+      status.innerText=`${key} found at position ${idx}`;
+      clearInterval(timer);
+    }
+    else if(phase===3){
+      highlight(3);
+      idx++; phase=0;
+    }
+  },700);
 }
 
-function resetList() {
-  list = [];
-  render();
+/* ================= RESET ================= */
+function resetList(){
+  clearInterval(timer);
+  list=[];
+  visual.innerHTML="";
+  visual.style.transform="translateY(0)";
+  codePanel.innerHTML="";
+  status.innerText="Reset completed";
 }
-
-render();
 </script>
 
 </body>
