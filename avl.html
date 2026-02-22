@@ -239,6 +239,7 @@
         y.height = 1 + Math.max(h(y.left), h(y.right));
         return y;
       }
+
       /* ---------- DELETE NODE (FIXED) ---------- */
       function minValueNode(node) {
         let current = node;
@@ -325,8 +326,21 @@
         while (q.length) {
           const [n, d, x] = q.shift();
           pos.set(n, { x, y: 7 - d * 2.8 });
-          if (n.left) q.push([n.left, d + 1, x - 6 / (d + 2)]);
-          if (n.right) q.push([n.right, d + 1, x + 6 / (d + 2)]);
+
+          // FIXED: Increased spread factor to 14 and adjusted divisor to (d+1)
+          // This ensures nodes have enough space even at deeper levels
+          // 🔥 Adaptive spacing based on node count
+          const totalNodes = countNodes(root);
+
+          // spacing grows only when tree grows
+          const baseSpread = totalNodes < 6 ? 6 : totalNodes < 12 ? 10 : 14;
+
+          if (n.left) q.push([n.left, d + 1, x - baseSpread / (d + 1)]);
+          if (n.right) q.push([n.right, d + 1, x + baseSpread / (d + 1)]);
+        }
+        function countNodes(node) {
+          if (!node) return 0;
+          return 1 + countNodes(node.left) + countNodes(node.right);
         }
 
         function render(n) {
