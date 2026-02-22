@@ -1,237 +1,343 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<title>Single Linked List Visualizer</title>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Single Linked List Visualizer</title>
 
-<style>
-/* ---- SAME CSS AS BEFORE (UNCHANGED) ---- */
-* { box-sizing: border-box; }
-body { margin:0; font-family:"Segoe UI",sans-serif; background:#f6f9fc; }
-.back-btn{position:fixed;top:16px;left:16px;font-size:34px;color:#2563eb;border:none;background:none;}
-.header-bar{height:80px;background:#fff;display:flex;align-items:center;justify-content:center;border-bottom:1px solid #e5e7eb;}
-.header-bar h1{font-size:36px;color:#1d4ed8;}
-.main{max-width:1400px;margin:40px auto;display:grid;grid-template-columns:360px 1fr;gap:28px;}
-#panel{background:#fff;padding:22px;border-radius:16px;}
-input,button{width:100%;margin-top:10px;padding:12px;border-radius:10px;border:1px solid #d1d5db;}
-button{background:#2563eb;color:#fff;font-weight:600;border:none;}
-#status{margin-top:14px;padding:10px;background:#eff6ff;color:#1d4ed8;text-align:center;border-radius:8px;font-weight:600;}
-#codePanel{margin-top:16px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px;font-family:Consolas,monospace;}
-.code-line{padding:6px 8px;border-radius:6px;}
-.active{background:#dbeafe;font-weight:bold;}
-#visual{position:relative;display:flex;align-items:center;min-height:220px;padding-left:40px;}
-#head{position:absolute;top:10px;left:40px;display:flex;flex-direction:column;align-items:center;}
-#head span{background:#16a34a;color:#fff;padding:4px 8px;font-size:12px;border-radius:6px;}
-#head-arrow{width:18px;height:18px;border-left:3px solid #16a34a;border-bottom:3px solid #16a34a;transform:rotate(-45deg);margin-top:4px;}
-.node{display:flex;background:#3b82f6;color:#fff;border-radius:10px;margin-right:14px;}
-.data,.next{width:90px;height:60px;display:flex;align-items:center;justify-content:center;}
-.arrow{font-size:36px;margin:0 16px;color:#94a3b8;}
-.null{font-weight:bold;color:#64748b;}
-</style>
-</head>
-
-<body>
-
-<a class="back-btn" href="linkedlist.html">←</a>
-
-<div class="header-bar"><h1>Single Linked List</h1></div>
-
-<div class="main">
-
-<div id="panel">
-  <input id="valueInput" placeholder="Enter value" />
-  <button onclick="startInsert()">Insert</button>
-  <button onclick="startDelete()">Delete</button>
-  <button onclick="startSearch()">Search</button>
-  <button onclick="resetList()">Reset</button>
-  <div id="status">Ready</div>
-  <div id="codePanel"></div>
-</div>
-
-<div class="visual-card">
-  <h3>Visualization</h3>
-  <div id="visual"></div>
-</div>
-
-</div>
-
-<script>
-let list = [];
-let timer = null;
-
-/* --------- PSEUDOCODE --------- */
-const pseudo = {
-  insert: [
-    "create new node",
-    "if head is null",
-    "  head = new node",
-    "else",
-    "  last.next = new node"
-  ],
-  delete: [
-    "if head is null",
-    "  return",
-    "find node",
-    "remove node"
-  ],
-  search: [
-    "start from head",
-    "if node.data == key",
-    "return found",
-    "return not found"
-  ]
-};
-
-function showCode(type){
-  codePanel.innerHTML="";
-  pseudo[type].forEach((l,i)=>{
-    const d=document.createElement("div");
-    d.className="code-line";
-    d.id="line"+i;
-    d.innerText=l;
-    codePanel.appendChild(d);
-  });
-}
-
-function highlight(i){
-  document.querySelectorAll(".code-line").forEach(l=>l.classList.remove("active"));
-  const el=document.getElementById("line"+i);
-  if(el) el.classList.add("active");
-}
-
-/* --------- RENDER --------- */
-function render(active=-1){
-  visual.innerHTML="";
-  if(list.length===0) return;
-
-  const head=document.createElement("div");
-  head.id="head";
-  head.innerHTML=`<span>HEAD</span><div id="head-arrow"></div>`;
-  visual.appendChild(head);
-
-  list.forEach((v,i)=>{
-    const n=document.createElement("div");
-    n.className="node";
-    if(i===active) n.style.background="#f97316";
-    n.innerHTML=`<div class="data">${v}</div><div class="next">NEXT</div>`;
-    visual.appendChild(n);
-
-    const a=document.createElement("div");
-    a.className="arrow";
-    a.innerText="→";
-    visual.appendChild(a);
-  });
-
-  const nul=document.createElement("div");
-  nul.className="null";
-  nul.innerText="NULL";
-  visual.appendChild(nul);
-}
-
-/* --------- INSERT --------- */
-function startInsert(){
-  const val=valueInput.value;
-  if(!val) return;
-
-  showCode("insert");
-  let step=0;
-  clearInterval(timer);
-
-  timer=setInterval(()=>{
-    highlight(step);
-
-    if(step===2 && list.length===0){
-      list.push(val); render();
-      status.innerText=`Inserted ${val}`;
-      clearInterval(timer);
-    }
-    if(step===4 && list.length>0){
-      list.push(val); render();
-      status.innerText=`Inserted ${val}`;
-      clearInterval(timer);
-    }
-    step++;
-  },700);
-}
-
-/* --------- DELETE --------- */
-function startDelete(){
-  const val=valueInput.value;
-  if(!val) return;
-
-  showCode("delete");
-  let step=0;
-  let idx=-1;
-  clearInterval(timer);
-
-  timer=setInterval(()=>{
-    highlight(step);
-    if(step===2) idx=list.indexOf(val);
-    if(step===3){
-      if(idx===-1){
-        status.innerText=`${val} not found`;
-      }else{
-        list.splice(idx,1);
-        render();
-        status.innerText=`Deleted ${val}`;
+    <style>
+      /* ---- SAME CSS AS BEFORE (UNCHANGED) ---- */
+      * {
+        box-sizing: border-box;
       }
-      clearInterval(timer);
-    }
-    step++;
-  },700);
-}
-
-/* --------- SEARCH (FIXED) --------- */
-function startSearch(){
-  const val=valueInput.value;
-  if(!val) return;
-
-  showCode("search");
-  let nodeIndex=0;
-  let codeStep=0;
-  clearInterval(timer);
-
-  timer=setInterval(()=>{
-    if(codeStep===0){
-      highlight(0);        // start from head
-      render(nodeIndex);
-      codeStep=1;
-    }
-    else if(codeStep===1){
-      highlight(1);        // if node.data == key
-      render(nodeIndex);
-
-      if(list[nodeIndex]===val){
-        codeStep=2;
-      }else{
-        nodeIndex++;
-        if(nodeIndex>=list.length){
-          codeStep=3;
-        }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", sans-serif;
+        background: #f6f9fc;
       }
-    }
-    else if(codeStep===2){
-      highlight(2);        // return found
-      status.innerText=`Element ${val} found`;
-      clearInterval(timer);
-    }
-    else if(codeStep===3){
-      highlight(3);        // return not found
-      status.innerText="Element not found";
-      clearInterval(timer);
-    }
-  },700);
-}
+      .back-btn {
+        position: fixed;
+        text-decoration: none;
+        top: 16px;
+        left: 16px;
+        font-size: 34px;
+        color: #2563eb;
+        border: none;
+        background: none;
+      }
+      .header-bar {
+        height: 80px;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      .header-bar h1 {
+        font-size: 36px;
+        color: #1d4ed8;
+      }
+      .main {
+        max-width: 1400px;
+        margin: 40px auto;
+        display: grid;
+        grid-template-columns: 360px 1fr;
+        gap: 28px;
+      }
+      #panel {
+        background: #fff;
+        padding: 22px;
+        border-radius: 16px;
+      }
+      input,
+      button {
+        width: 100%;
+        margin-top: 10px;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+      }
+      button {
+        background: #2563eb;
+        color: #fff;
+        font-weight: 600;
+        border: none;
+      }
+      #status {
+        margin-top: 14px;
+        padding: 10px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        text-align: center;
+        border-radius: 8px;
+        font-weight: 600;
+      }
+      #codePanel {
+        margin-top: 16px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 12px;
+        font-family: Consolas, monospace;
+      }
+      .code-line {
+        padding: 6px 8px;
+        border-radius: 6px;
+      }
+      .active {
+        background: #dbeafe;
+        font-weight: bold;
+      }
+      #visual {
+        position: relative;
+        display: flex;
+        align-items: center;
+        min-height: 220px;
+        padding-left: 40px;
+      }
+      #head {
+        position: absolute;
+        top: 10px;
+        left: 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      #head span {
+        background: #16a34a;
+        color: #fff;
+        padding: 4px 8px;
+        font-size: 12px;
+        border-radius: 6px;
+      }
+      #head-arrow {
+        width: 18px;
+        height: 18px;
+        border-left: 3px solid #16a34a;
+        border-bottom: 3px solid #16a34a;
+        transform: rotate(-45deg);
+        margin-top: 4px;
+      }
+      .node {
+        display: flex;
+        background: #3b82f6;
+        color: #fff;
+        border-radius: 10px;
+        margin-right: 14px;
+      }
+      .data,
+      .next {
+        width: 90px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .arrow {
+        font-size: 36px;
+        margin: 0 16px;
+        color: #94a3b8;
+      }
+      .null {
+        font-weight: bold;
+        color: #64748b;
+      }
+    </style>
+  </head>
 
-/* --------- RESET --------- */
-function resetList(){
-  clearInterval(timer);
-  list=[];
-  visual.innerHTML="";
-  codePanel.innerHTML="";
-  status.innerText="List cleared";
-}
-</script>
+  <body>
+    <a class="back-btn" href="linkedlist.html">←</a>
 
-</body>
+    <div class="header-bar"><h1>Single Linked List</h1></div>
+
+    <div class="main">
+      <div id="panel">
+        <input id="valueInput" placeholder="Enter value" />
+        <button onclick="startInsert()">Insert</button>
+        <button onclick="startDelete()">Delete</button>
+        <button onclick="startSearch()">Search</button>
+        <button onclick="resetList()">Reset</button>
+        <div id="status">Ready</div>
+        <div id="codePanel"></div>
+      </div>
+
+      <div class="visual-card">
+        <h3>Visualization</h3>
+        <div id="visual"></div>
+      </div>
+    </div>
+
+    <script>
+      let list = [];
+      let timer = null;
+
+      /* --------- PSEUDOCODE --------- */
+      const pseudo = {
+        insert: [
+          "create new node",
+          "if head is null",
+          "  head = new node",
+          "else",
+          "  last.next = new node",
+        ],
+        delete: ["if head is null", "  return", "find node", "remove node"],
+        search: [
+          "start from head",
+          "if node.data == key",
+          "return found",
+          "return not found",
+        ],
+      };
+
+      function showCode(type) {
+        codePanel.innerHTML = "";
+        pseudo[type].forEach((l, i) => {
+          const d = document.createElement("div");
+          d.className = "code-line";
+          d.id = "line" + i;
+          d.innerText = l;
+          codePanel.appendChild(d);
+        });
+      }
+
+      function highlight(i) {
+        document
+          .querySelectorAll(".code-line")
+          .forEach((l) => l.classList.remove("active"));
+        const el = document.getElementById("line" + i);
+        if (el) el.classList.add("active");
+      }
+
+      /* --------- RENDER --------- */
+      function render(active = -1) {
+        visual.innerHTML = "";
+        if (list.length === 0) return;
+
+        const head = document.createElement("div");
+        head.id = "head";
+        head.innerHTML = `<span>HEAD</span><div id="head-arrow"></div>`;
+        visual.appendChild(head);
+
+        list.forEach((v, i) => {
+          const n = document.createElement("div");
+          n.className = "node";
+          if (i === active) n.style.background = "#f97316";
+          n.innerHTML = `<div class="data">${v}</div><div class="next">NEXT</div>`;
+          visual.appendChild(n);
+
+          const a = document.createElement("div");
+          a.className = "arrow";
+          a.innerText = "→";
+          visual.appendChild(a);
+        });
+
+        const nul = document.createElement("div");
+        nul.className = "null";
+        nul.innerText = "NULL";
+        visual.appendChild(nul);
+      }
+
+      /* --------- INSERT --------- */
+      function startInsert() {
+        const val = valueInput.value;
+        if (!val) return;
+
+        showCode("insert");
+        let step = 0;
+        clearInterval(timer);
+
+        timer = setInterval(() => {
+          highlight(step);
+
+          if (step === 2 && list.length === 0) {
+            list.push(val);
+            render();
+            status.innerText = `Inserted ${val}`;
+            clearInterval(timer);
+          }
+          if (step === 4 && list.length > 0) {
+            list.push(val);
+            render();
+            status.innerText = `Inserted ${val}`;
+            clearInterval(timer);
+          }
+          step++;
+        }, 700);
+      }
+
+      /* --------- DELETE --------- */
+      function startDelete() {
+        const val = valueInput.value;
+        if (!val) return;
+
+        showCode("delete");
+        let step = 0;
+        let idx = -1;
+        clearInterval(timer);
+
+        timer = setInterval(() => {
+          highlight(step);
+          if (step === 2) idx = list.indexOf(val);
+          if (step === 3) {
+            if (idx === -1) {
+              status.innerText = `${val} not found`;
+            } else {
+              list.splice(idx, 1);
+              render();
+              status.innerText = `Deleted ${val}`;
+            }
+            clearInterval(timer);
+          }
+          step++;
+        }, 700);
+      }
+
+      /* --------- SEARCH (FIXED) --------- */
+      function startSearch() {
+        const val = valueInput.value;
+        if (!val) return;
+
+        showCode("search");
+        let nodeIndex = 0;
+        let codeStep = 0;
+        clearInterval(timer);
+
+        timer = setInterval(() => {
+          if (codeStep === 0) {
+            highlight(0); // start from head
+            render(nodeIndex);
+            codeStep = 1;
+          } else if (codeStep === 1) {
+            highlight(1); // if node.data == key
+            render(nodeIndex);
+
+            if (list[nodeIndex] === val) {
+              codeStep = 2;
+            } else {
+              nodeIndex++;
+              if (nodeIndex >= list.length) {
+                codeStep = 3;
+              }
+            }
+          } else if (codeStep === 2) {
+            highlight(2); // return found
+            status.innerText = `Element ${val} found`;
+            clearInterval(timer);
+          } else if (codeStep === 3) {
+            highlight(3); // return not found
+            status.innerText = "Element not found";
+            clearInterval(timer);
+          }
+        }, 700);
+      }
+
+      /* --------- RESET --------- */
+      function resetList() {
+        clearInterval(timer);
+        list = [];
+        visual.innerHTML = "";
+        codePanel.innerHTML = "";
+        status.innerText = "List cleared";
+      }
+    </script>
+  </body>
 </html>
