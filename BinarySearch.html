@@ -364,18 +364,49 @@
       }
 
       /* ---------- LOGIC ---------- */
+      /* ---------- FREEZE UI ---------- */
+      function freezeUI(msg) {
+        document.getElementById("status").innerText = msg;
+
+        // Disable buttons & inputs
+        document
+          .querySelectorAll("#panel input, #panel button")
+          .forEach((el) => {
+            el.disabled = true;
+            el.style.opacity = 0.6;
+            el.style.cursor = "not-allowed";
+          });
+
+        running = false;
+      }
       function generate() {
         running = false;
-        array = document
+
+        const raw = document
           .getElementById("arrayInput")
           .value.split(",")
-          .map(Number)
-          .sort((a, b) => a - b);
+          .map(Number);
+
+        // CHECK IF SORTED
+        for (let i = 1; i < raw.length; i++) {
+          if (raw[i] < raw[i - 1]) {
+            document.getElementById("status").innerText =
+              "Input should be in sorted order!";
+            document.getElementById("status").style.color = "red";
+            freezeUI("Input should be in sorted order");
+            return;
+          }
+        }
+
+        // If sorted, continue normally
+        array = raw;
         target = Number(document.getElementById("targetInput").value);
+
         left = 0;
         right = array.length - 1;
         phase = 0;
         iterCount = 0;
+
         createBoxes();
         highlight(null);
         document.getElementById("status").innerText = "Status: Ready";
