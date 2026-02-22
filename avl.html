@@ -204,6 +204,51 @@
         }
         return node;
       }
+      /* ===== AVL DELETE (FIX) ===== */
+      function minValueNode(node) {
+        let current = node;
+        while (current.left) current = current.left;
+        return current;
+      }
+
+      function deleteNode(root, key) {
+        if (!root) return root;
+
+        if (key < root.val) root.left = deleteNode(root.left, key);
+        else if (key > root.val) root.right = deleteNode(root.right, key);
+        else {
+          // node with 1 or 0 child
+          if (!root.left || !root.right) {
+            const temp = root.left ? root.left : root.right;
+            if (!temp) return null;
+            else root = temp;
+          } else {
+            // node with 2 children
+            const temp = minValueNode(root.right);
+            root.val = temp.val;
+            root.right = deleteNode(root.right, temp.val);
+          }
+        }
+
+        if (!root) return root;
+
+        root.height = 1 + Math.max(h(root.left), h(root.right));
+        const b = balance(root);
+
+        // rebalance
+        if (b > 1 && balance(root.left) >= 0) return rightRotate(root);
+        if (b > 1 && balance(root.left) < 0) {
+          root.left = leftRotate(root.left);
+          return rightRotate(root);
+        }
+        if (b < -1 && balance(root.right) <= 0) return leftRotate(root);
+        if (b < -1 && balance(root.right) > 0) {
+          root.right = rightRotate(root.right);
+          return leftRotate(root);
+        }
+
+        return root;
+      }
 
       /* ✅ AVL DELETE (ADDED) */
       function minValueNode(node) {
