@@ -1,217 +1,211 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<title>Trees</title>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Trees</title>
 
-<style>
-* {
-  box-sizing: border-box;
-}
+    <style>
+      * {
+        box-sizing: border-box;
+      }
 
-body {
-    margin: 0;
-    font-family: "Segoe UI", sans-serif;
-    background: #f6f9fc;
-    color: #1f2937;
-  }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", sans-serif;
+        background: #f6f9fc;
+        color: #1f2937;
+      }
 
-  /* ================= HEADER ================= */
-  .page-header {
-    position: relative;
-    padding: 28px 32px 32px;
-    background: #ffffff;
-    border-bottom: 1px solid #e5e7eb;
-    text-align: center;
-  }
+      /* ================= HEADER ================= */
+      .page-header {
+        position: relative;
+        padding: 28px 32px 32px;
+        background: #ffffff;
+        border-bottom: 1px solid #e5e7eb;
+        text-align: center;
+      }
 
-  .back-btn {
-    position: absolute;
-    left: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    border: none;
-    background: none;
+      .back-btn {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: none;
 
-    font-size: 34px;
-    padding: 8px 14px;
-    font-weight: 700;
-    color: #2563eb;
-    cursor: pointer;
-    border-radius: 50%;
-    text-decoration: none; /* ✅ NO UNDERLINE */
-    transition: transform 0.2s ease, background 0.2s ease;
-  }
+        font-size: 34px;
+        padding: 8px 14px;
+        font-weight: 700;
+        color: #2563eb;
+        cursor: pointer;
+        border-radius: 50%;
+        text-decoration: none; /* ✅ NO UNDERLINE */
+        transition:
+          transform 0.2s ease,
+          background 0.2s ease;
+      }
 
-  .back-btn:hover {
-    transform: translateY(-50%) scale(1.15);
-    background: rgba(37, 99, 235, 0.1);
-  }
+      .back-btn:hover {
+        transform: translateY(-50%) scale(1.15);
+        background: rgba(37, 99, 235, 0.1);
+      }
 
-  .page-header h1 {
-    margin: 0;
-    font-size: 38px;
-    font-weight: 700;
-    color: #0f172a;
-  }
+      .page-header h1 {
+        margin: 0;
+        font-size: 38px;
+        font-weight: 700;
+        color: #0f172a;
+      }
 
-  .page-header p {
-    margin-top: 8px;
-    font-size: 17px;
-    color: #64748b;
-  }
+      .page-header p {
+        margin-top: 8px;
+        font-size: 17px;
+        color: #64748b;
+      }
 
-/* ================= MAIN ================= */
-.main {
-  padding: 50px 40px;
-}
+      /* ================= MAIN ================= */
+      .main {
+        padding: 50px 40px;
+      }
 
-/* ================= CARD GRID ================= */
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
-}
+      /* ================= CARD GRID ================= */
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+      }
 
-/* ================= CARD ================= */
-.card {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 28px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-  display: flex;
-  flex-direction: column;
-}
+      /* ================= CARD ================= */
+      .card {
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 28px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        display: flex;
+        flex-direction: column;
+      }
 
-.card h2 {
-  color: #2563eb;
-  font-size: 22px;
-  margin-bottom: 14px;
-}
+      .card h2 {
+        color: #2563eb;
+        font-size: 22px;
+        margin-bottom: 14px;
+      }
 
-.card p {
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: 12px;
-  color: #374151;
-}
+      .card p {
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 12px;
+        color: #374151;
+      }
 
-.card strong {
-  display: block;
-  margin-bottom: 6px;
-}
+      .card strong {
+        display: block;
+        margin-bottom: 6px;
+      }
 
-/* ================= EXAMPLE BOX ================= */
-.example {
-  background: #f1f5f9;
-  padding: 12px 14px;
-  border-radius: 10px;
-  font-size: 13px;
-  margin-top: 10px;
-  margin-bottom: 20px;
-  color: #111827;
-}
+      /* ================= EXAMPLE BOX ================= */
+      .example {
+        background: #f1f5f9;
+        padding: 12px 14px;
+        border-radius: 10px;
+        font-size: 13px;
+        margin-top: 10px;
+        margin-bottom: 20px;
+        color: #111827;
+      }
 
-/* ================= BUTTON ================= */
-.card button {
-  margin-top: auto;
-  padding: 14px;
-  border-radius: 14px;
-  border: none;
-  font-weight: 600;
-  font-size: 15px;
-  background: linear-gradient(to right, #2563eb, #1d4ed8);
-  color: white;
-  cursor: pointer;
-}
+      /* ================= BUTTON ================= */
+      .card button {
+        margin-top: auto;
+        padding: 14px;
+        border-radius: 14px;
+        border: none;
+        font-weight: 600;
+        font-size: 15px;
+        background: linear-gradient(to right, #2563eb, #1d4ed8);
+        color: white;
+        cursor: pointer;
+      }
 
-.card button:hover {
-  opacity: 0.95;
-}
+      .card button:hover {
+        opacity: 0.95;
+      }
 
-/* ================= RESPONSIVE ================= */
-@media (max-width: 1000px) {
-  .card-grid {
-    grid-template-columns: 1fr;
-  }
-}
-</style>
-</head>
+      /* ================= RESPONSIVE ================= */
+      @media (max-width: 1000px) {
+        .card-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
 
-<body>
-
-<div class="page-header">
-  <a href="HomePage.html" class="back-btn">←</a>
-  <h1>Trees</h1>
-  <p>
-    Explore different types of tree data structures
-  </p>
-</div>
-
-
-
-<div class="main">
-  <div class="card-grid">
-
-    <!-- Binary Tree -->
-    <div class="card">
-      <h2>Binary Tree</h2>
-      <p>A hierarchical data structure where each node has at most two children.</p>
-
-      <strong>Use Cases:</strong>
-      <p>Expression trees, decision trees, hierarchical data</p>
-
-      <strong>Operations:</strong>
-      <p>Insert node, Delete node, Tree traversal</p>
-
-      <strong>Example:</strong>
-      <div class="example">
-        10 → [5, 15]
-      </div>
-
-      <button onclick="location.href='binarytree.html'">Visualize</button>
+  <body>
+    <div class="page-header">
+      <a href="index.html" class="back-btn">←</a>
+      <h1>Trees</h1>
+      <p>Explore different types of tree data structures</p>
     </div>
 
-    <!-- BST -->
-    <div class="card">
-      <h2>Binary Search Tree</h2>
-      <p>A binary tree where left subtree values are smaller and right subtree values are larger.</p>
+    <div class="main">
+      <div class="card-grid">
+        <!-- Binary Tree -->
+        <div class="card">
+          <h2>Binary Tree</h2>
+          <p>
+            A hierarchical data structure where each node has at most two
+            children.
+          </p>
 
-      <strong>Use Cases:</strong>
-      <p>Fast searching, sorted data, database indexing</p>
+          <strong>Use Cases:</strong>
+          <p>Expression trees, decision trees, hierarchical data</p>
 
-      <strong>Operations:</strong>
-      <p>Insert, Delete, Search</p>
+          <strong>Operations:</strong>
+          <p>Insert node, Delete node, Tree traversal</p>
 
-      <strong>Example:</strong>
-      <div class="example">
-        Inorder → 5 → 7 → 10 → 15
+          <strong>Example:</strong>
+          <div class="example">10 → [5, 15]</div>
+
+          <button onclick="location.href = 'binarytree.html'">Visualize</button>
+        </div>
+
+        <!-- BST -->
+        <div class="card">
+          <h2>Binary Search Tree</h2>
+          <p>
+            A binary tree where left subtree values are smaller and right
+            subtree values are larger.
+          </p>
+
+          <strong>Use Cases:</strong>
+          <p>Fast searching, sorted data, database indexing</p>
+
+          <strong>Operations:</strong>
+          <p>Insert, Delete, Search</p>
+
+          <strong>Example:</strong>
+          <div class="example">Inorder → 5 → 7 → 10 → 15</div>
+
+          <button onclick="location.href = 'bst.html'">Visualize</button>
+        </div>
+
+        <!-- AVL -->
+        <div class="card">
+          <h2>AVL Tree</h2>
+          <p>A self-balancing BST where height difference is at most 1.</p>
+
+          <strong>Use Cases:</strong>
+          <p>Balanced search operations, dynamic datasets</p>
+
+          <strong>Operations:</strong>
+          <p>Rotations, Insert, Delete</p>
+
+          <strong>Example:</strong>
+          <div class="example">Insert 10 → 20 → 30 → Rotation</div>
+
+          <button onclick="location.href = 'avl.html'">Visualize</button>
+        </div>
       </div>
-
-      <button onclick="location.href='bst.html'">Visualize</button>
     </div>
-
-    <!-- AVL -->
-    <div class="card">
-      <h2>AVL Tree</h2>
-      <p>A self-balancing BST where height difference is at most 1.</p>
-
-      <strong>Use Cases:</strong>
-      <p>Balanced search operations, dynamic datasets</p>
-
-      <strong>Operations:</strong>
-      <p>Rotations, Insert, Delete</p>
-
-      <strong>Example:</strong>
-      <div class="example">
-        Insert 10 → 20 → 30 → Rotation
-      </div>
-
-      <button onclick="location.href='avl.html'">Visualize</button>
-    </div>
-
-  </div>
-</div>
-
-</body>
+  </body>
 </html>

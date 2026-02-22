@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -138,7 +138,7 @@
   </head>
 
   <body>
-    <a href="HomePage.html" class="back-btn">←</a>
+    <a href="index.html" class="back-btn">←</a>
 
     <header>
       <div class="title">Insertion Sort</div>
@@ -183,13 +183,28 @@
     <div id="complexity" aria-hidden="false">
       <table>
         <thead>
-          <tr><th>Case</th><th>Time</th></tr>
+          <tr>
+            <th>Case</th>
+            <th>Time</th>
+          </tr>
         </thead>
         <tbody>
-          <tr id="bestRow"><td>Best</td><td>O(n)</td></tr>
-          <tr id="avgRow"><td>Average</td><td>O(n²)</td></tr>
-          <tr id="worstRow"><td>Worst</td><td>O(n²)</td></tr>
-          <tr id="spaceRow" class="neutral"><td>Space</td><td>O(1)</td></tr>
+          <tr id="bestRow">
+            <td>Best</td>
+            <td>O(n)</td>
+          </tr>
+          <tr id="avgRow">
+            <td>Average</td>
+            <td>O(n²)</td>
+          </tr>
+          <tr id="worstRow">
+            <td>Worst</td>
+            <td>O(n²)</td>
+          </tr>
+          <tr id="spaceRow" class="neutral">
+            <td>Space</td>
+            <td>O(1)</td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -205,7 +220,7 @@
         60,
         window.innerWidth / window.innerHeight,
         0.1,
-        1000
+        1000,
       );
       camera.position.set(0, 10, 18);
       camera.lookAt(0, 5, 0);
@@ -313,12 +328,12 @@
           const h = (v / max) * 8 + 0.5;
           const bar = new THREE.Mesh(
             new THREE.BoxGeometry(1, h, 1),
-            new THREE.MeshStandardMaterial({ color: 0x0077ff })
+            new THREE.MeshStandardMaterial({ color: 0x0077ff }),
           );
           bar.position.set(
             idx * spacing - ((array.length - 1) * spacing) / 2,
             h / 2,
-            0
+            0,
           );
 
           const lb = makeLabel(v.toString());
@@ -343,7 +358,8 @@
         const n = array.length;
         if (state === "ready") {
           // best-case only if already sorted (insertion sort O(n))
-          if (initiallySorted && n > 0) document.getElementById("bestRow").classList.add("active");
+          if (initiallySorted && n > 0)
+            document.getElementById("bestRow").classList.add("active");
           else document.getElementById("avgRow").classList.add("active");
           return;
         }
@@ -353,7 +369,8 @@
           return;
         }
         if (state === "completed") {
-          if (initiallySorted) document.getElementById("bestRow").classList.add("active");
+          if (initiallySorted)
+            document.getElementById("bestRow").classList.add("active");
           else document.getElementById("worstRow").classList.add("active");
           return;
         }
@@ -367,7 +384,9 @@
           .value.split(",")
           .map(Number);
         // detect if initially sorted (non-decreasing)
-        initiallySorted = array.length <= 1 || array.every((v, idx) => idx === 0 || array[idx] >= array[idx - 1]);
+        initiallySorted =
+          array.length <= 1 ||
+          array.every((v, idx) => idx === 0 || array[idx] >= array[idx - 1]);
         createBars();
         highlight(null);
         document.getElementById("status").innerText = "Status: Ready";

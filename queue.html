@@ -1,306 +1,326 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<title>Queue Visualization</title>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Queue Visualization</title>
 
-<style>
-* { box-sizing: border-box; }
+    <style>
+      * {
+        box-sizing: border-box;
+      }
 
-body {
-  margin: 0;
-  font-family: "Segoe UI", sans-serif;
-  background: #f5f7fb;
-  color: #333;
-}
+      body {
+        margin: 0;
+        font-family: "Segoe UI", sans-serif;
+        background: #f5f7fb;
+        color: #333;
+      }
 
-/* HEADER */
-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  padding: 18px 26px;
-  background: white;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
+      /* HEADER */
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        padding: 18px 26px;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
 
-.back-btn {
-  position: absolute;
-  left: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 34px;
-  background: none;
-  border: none;
-  color: #2563eb;
-  cursor: pointer;
-}
+      .back-btn {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 34px;
+        background: none;
+        border: none;
+        color: #2563eb;
+        cursor: pointer;
+      }
 
-header h1 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-  color: #2563eb;
-}
+      header h1 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 600;
+        color: #2563eb;
+      }
 
-/* MAIN */
-.main {
-  display: grid;
-  grid-template-columns: 340px 1fr;
-  gap: 32px;
-  padding: 32px;
-}
+      /* MAIN */
+      .main {
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        gap: 32px;
+        padding: 32px;
+      }
 
-/* LEFT */
-.left {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
+      /* LEFT */
+      .left {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
 
-.card {
-  background: white;
-  border-radius: 18px;
-  padding: 22px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-}
+      .card {
+        background: white;
+        border-radius: 18px;
+        padding: 22px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      }
 
-input {
-  width: 100%;
-  padding: 14px;
-  border-radius: 12px;
-  border: 1px solid #ddd;
-  margin-bottom: 16px;
-}
+      input {
+        width: 100%;
+        padding: 14px;
+        border-radius: 12px;
+        border: 1px solid #ddd;
+        margin-bottom: 16px;
+      }
 
-.btn-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
+      .btn-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
 
-button {
-  padding: 14px;
-  border-radius: 12px;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-}
+      button {
+        padding: 14px;
+        border-radius: 12px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+      }
 
-.primary { background: #2563eb; color: white; }
-.secondary { background: #eef2ff; }
-.peek { background: #dbeafe; color: #1e40af; }
+      .primary {
+        background: #2563eb;
+        color: white;
+      }
+      .secondary {
+        background: #eef2ff;
+      }
+      .peek {
+        background: #dbeafe;
+        color: #1e40af;
+      }
 
-/* RIGHT */
-.visual-card {
-  background: white;
-  border-radius: 18px;
-  padding: 24px;
-  height: 420px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-}
+      /* RIGHT */
+      .visual-card {
+        background: white;
+        border-radius: 18px;
+        padding: 24px;
+        height: 420px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      }
 
-.queue {
-  display: flex;
-  align-items: center;
-  height: 100%;
-  overflow-x: auto;
-}
+      .queue {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        overflow-x: auto;
+      }
 
-/* QUEUE BLOCK */
-.block {
-  min-width: 90px;
-  height: 60px;
-  background: #2563eb;
-  color: white;
-  font-weight: bold;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  margin-right: 14px;
-  box-shadow: 0 6px 18px rgba(37,99,235,0.35);
-}
+      /* QUEUE BLOCK */
+      .block {
+        min-width: 90px;
+        height: 60px;
+        background: #2563eb;
+        color: white;
+        font-weight: bold;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        margin-right: 14px;
+        box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+      }
 
-/* FRONT / REAR */
-.marker {
-  font-size: 14px;
-  font-weight: bold;
-  color: #16a34a;
-  margin-right: 8px;
-}
+      /* FRONT / REAR */
+      .marker {
+        font-size: 14px;
+        font-weight: bold;
+        color: #16a34a;
+        margin-right: 8px;
+      }
 
-/* 🔥 LIVE PSEUDOCODE */
-#pseudoBox {
-  display: none;
-  position: fixed;
-  bottom: 24px;
-  left: 24px;
-  width: 340px;
-  background: #0f172a;
-  color: #e5e7eb;
-  padding: 16px;
-  border-radius: 14px;
-  font-family: Consolas, monospace;
-  font-size: 14px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-  z-index: 1000;
-}
+      /* 🔥 LIVE PSEUDOCODE */
+      #pseudoBox {
+        display: none;
+        position: fixed;
+        bottom: 24px;
+        left: 24px;
+        width: 340px;
+        background: #0f172a;
+        color: #e5e7eb;
+        padding: 16px;
+        border-radius: 14px;
+        font-family: Consolas, monospace;
+        font-size: 14px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        z-index: 1000;
+      }
 
-.pseudo-line {
-  padding: 6px 8px;
-  border-radius: 6px;
-}
+      .pseudo-line {
+        padding: 6px 8px;
+        border-radius: 6px;
+      }
 
-.active {
-  background: #2563eb;
-  color: white;
-}
-</style>
-</head>
+      .active {
+        background: #2563eb;
+        color: white;
+      }
+    </style>
+  </head>
 
-<body>
+  <body>
+    <header>
+      <button class="back-btn" onclick="window.location.href = 'index.html'">
+        ←
+      </button>
+      <h1>Queue Visualization</h1>
+    </header>
 
-<header>
-  <button class="back-btn" onclick="window.location.href='HomePage.html'">←</button>
-  <h1>Queue Visualization</h1>
-</header>
+    <div class="main">
+      <div class="left">
+        <div class="card">
+          <h3>Controls</h3>
+          <input id="valueInput" placeholder="e.g. 23" />
 
-<div class="main">
+          <div class="btn-row">
+            <button class="primary" onclick="enqueueWithPseudo()">
+              Enqueue
+            </button>
+            <button class="secondary" onclick="dequeueWithPseudo()">
+              Dequeue
+            </button>
+            <button class="peek" onclick="peek()">Peek</button>
+            <button class="secondary" onclick="resetQueue()">Reset</button>
+          </div>
+        </div>
 
-  <div class="left">
-    <div class="card">
-      <h3>Controls</h3>
-      <input id="valueInput" placeholder="e.g. 23" />
+        <div class="card">
+          <p>Queue Size: <b id="size">0</b></p>
+          <p>Front Element: <b id="front">Empty</b></p>
+          <p>Time Complexity: <b>O(1)</b></p>
+        </div>
+      </div>
 
-      <div class="btn-row">
-        <button class="primary" onclick="enqueueWithPseudo()">Enqueue</button>
-        <button class="secondary" onclick="dequeueWithPseudo()">Dequeue</button>
-        <button class="peek" onclick="peek()">Peek</button>
-        <button class="secondary" onclick="resetQueue()">Reset</button>
+      <div class="visual-card">
+        <div class="queue" id="queue"></div>
       </div>
     </div>
 
-    <div class="card">
-      <p>Queue Size: <b id="size">0</b></p>
-      <p>Front Element: <b id="front">Empty</b></p>
-      <p>Time Complexity: <b>O(1)</b></p>
-    </div>
-  </div>
+    <!-- 🔥 LIVE PSEUDOCODE -->
+    <div id="pseudoBox"></div>
 
-  <div class="visual-card">
-    <div class="queue" id="queue"></div>
-  </div>
+    <script>
+      let queue = [];
 
-</div>
+      function updateInfo() {
+        size.innerText = queue.length;
+        front.innerText = queue.length ? queue[0] : "Empty";
+      }
 
-<!-- 🔥 LIVE PSEUDOCODE -->
-<div id="pseudoBox"></div>
+      /* 🔥 PSEUDO RUNNER */
+      function runPseudo(lines, callback) {
+        const box = document.getElementById("pseudoBox");
+        box.innerHTML = lines
+          .map((l) => `<div class="pseudo-line">${l}</div>`)
+          .join("");
+        box.style.display = "block";
 
-<script>
-let queue = [];
+        const rows = box.children;
+        let i = 0;
 
-function updateInfo() {
-  size.innerText = queue.length;
-  front.innerText = queue.length ? queue[0] : "Empty";
-}
+        function step() {
+          if (i > 0) rows[i - 1].classList.remove("active");
+          if (i < rows.length) {
+            rows[i].classList.add("active");
+            i++;
+            setTimeout(step, 600);
+          } else {
+            setTimeout(() => {
+              box.style.display = "none";
+              callback();
+            }, 400);
+          }
+        }
+        step();
+      }
 
-/* 🔥 PSEUDO RUNNER */
-function runPseudo(lines, callback) {
-  const box = document.getElementById("pseudoBox");
-  box.innerHTML = lines.map(l => `<div class="pseudo-line">${l}</div>`).join("");
-  box.style.display = "block";
+      /* ---------- ENQUEUE ---------- */
+      function enqueueWithPseudo() {
+        const value = valueInput.value;
+        if (!value) return;
 
-  const rows = box.children;
-  let i = 0;
+        runPseudo(
+          [
+            "if queue is full → overflow",
+            "rear = rear + 1",
+            "queue[rear] = value",
+          ],
+          () => {
+            queue.push(value);
+            renderQueue();
+          },
+        );
+      }
 
-  function step() {
-    if (i > 0) rows[i - 1].classList.remove("active");
-    if (i < rows.length) {
-      rows[i].classList.add("active");
-      i++;
-      setTimeout(step, 600);
-    } else {
-      setTimeout(() => {
-        box.style.display = "none";
-        callback();
-      }, 400);
-    }
-  }
-  step();
-}
+      /* ---------- DEQUEUE ---------- */
+      function dequeueWithPseudo() {
+        if (!queue.length) return;
 
-/* ---------- ENQUEUE ---------- */
-function enqueueWithPseudo() {
-  const value = valueInput.value;
-  if (!value) return;
+        runPseudo(
+          [
+            "if queue is empty → underflow",
+            "value = queue[front]",
+            "front = front + 1",
+          ],
+          () => {
+            queue.shift();
+            renderQueue();
+          },
+        );
+      }
 
-  runPseudo([
-    "if queue is full → overflow",
-    "rear = rear + 1",
-    "queue[rear] = value"
-  ], () => {
-    queue.push(value);
-    renderQueue();
-  });
-}
+      /* ---------- RENDER ---------- */
+      function renderQueue() {
+        const q = document.getElementById("queue");
+        q.innerHTML = "";
 
-/* ---------- DEQUEUE ---------- */
-function dequeueWithPseudo() {
-  if (!queue.length) return;
+        queue.forEach((val, i) => {
+          if (i === 0) {
+            const f = document.createElement("div");
+            f.className = "marker";
+            f.innerText = "FRONT";
+            q.appendChild(f);
+          }
 
-  runPseudo([
-    "if queue is empty → underflow",
-    "value = queue[front]",
-    "front = front + 1"
-  ], () => {
-    queue.shift();
-    renderQueue();
-  });
-}
+          const b = document.createElement("div");
+          b.className = "block";
+          b.innerText = val;
+          q.appendChild(b);
 
-/* ---------- RENDER ---------- */
-function renderQueue() {
-  const q = document.getElementById("queue");
-  q.innerHTML = "";
+          if (i === queue.length - 1) {
+            const r = document.createElement("div");
+            r.className = "marker";
+            r.innerText = "REAR";
+            q.appendChild(r);
+          }
+        });
 
-  queue.forEach((val, i) => {
-    if (i === 0) {
-      const f = document.createElement("div");
-      f.className = "marker";
-      f.innerText = "FRONT";
-      q.appendChild(f);
-    }
+        updateInfo();
+      }
 
-    const b = document.createElement("div");
-    b.className = "block";
-    b.innerText = val;
-    q.appendChild(b);
+      function peek() {
+        if (!queue.length) alert("Queue is empty");
+      }
 
-    if (i === queue.length - 1) {
-      const r = document.createElement("div");
-      r.className = "marker";
-      r.innerText = "REAR";
-      q.appendChild(r);
-    }
-  });
+      function resetQueue() {
+        queue = [];
+        renderQueue();
+      }
 
-  updateInfo();
-}
-
-function peek() {
-  if (!queue.length) alert("Queue is empty");
-}
-
-function resetQueue() {
-  queue = [];
-  renderQueue();
-}
-
-renderQueue();
-</script>
-
-</body>
+      renderQueue();
+    </script>
+  </body>
 </html>

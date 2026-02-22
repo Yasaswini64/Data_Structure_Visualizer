@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -123,7 +123,7 @@
   </head>
 
   <body>
-    <a href="HomePage.html" class="back-btn">←</a>
+    <a href="index.html" class="back-btn">←</a>
 
     <header>
       <div class="title">Selection Sort</div>
@@ -162,17 +162,32 @@
         <div id="l6">&nbsp;&nbsp;swap(arr[i], arr[minIndex])</div>
       </div>
     </div>
-     <!-- Complexity table in bottom-right -->
+    <!-- Complexity table in bottom-right -->
     <div id="complexity" aria-hidden="false">
       <table>
         <thead>
-          <tr><th>Case</th><th>Time</th></tr>
+          <tr>
+            <th>Case</th>
+            <th>Time</th>
+          </tr>
         </thead>
         <tbody>
-          <tr id="bestRow"><td>Best</td><td>O(n²)</td></tr>
-          <tr id="avgRow"><td>Average</td><td>O(n²)</td></tr>
-          <tr id="worstRow"><td>Worst</td><td>O(n²)</td></tr>
-          <tr id="spaceRow" class="neutral"><td>Space</td><td>O(1)</td></tr>
+          <tr id="bestRow">
+            <td>Best</td>
+            <td>O(n²)</td>
+          </tr>
+          <tr id="avgRow">
+            <td>Average</td>
+            <td>O(n²)</td>
+          </tr>
+          <tr id="worstRow">
+            <td>Worst</td>
+            <td>O(n²)</td>
+          </tr>
+          <tr id="spaceRow" class="neutral">
+            <td>Space</td>
+            <td>O(1)</td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -187,7 +202,7 @@
         60,
         window.innerWidth / window.innerHeight,
         0.1,
-        1000
+        1000,
       );
       camera.position.set(0, 10, 18);
       camera.lookAt(0, 5, 0);
@@ -291,12 +306,12 @@
           const h = (v / max) * 8 + 0.5;
           const bar = new THREE.Mesh(
             new THREE.BoxGeometry(1, h, 1),
-            new THREE.MeshStandardMaterial({ color: 0x0077ff })
+            new THREE.MeshStandardMaterial({ color: 0x0077ff }),
           );
           bar.position.set(
             idx * spacing - ((array.length - 1) * spacing) / 2,
             h / 2,
-            0
+            0,
           );
 
           const lb = makeLabel(v.toString());
@@ -323,7 +338,7 @@
             bars[a].userData.label.position.x,
           ];
       }
-       /* ---------- COMPLEXITY UI ---------- */
+      /* ---------- COMPLEXITY UI ---------- */
       function clearComplexityHighlight() {
         ["bestRow", "avgRow", "worstRow"].forEach((id) => {
           const el = document.getElementById(id);
@@ -336,7 +351,8 @@
         const n = array.length;
         // Selection sort comparisons are O(n^2) in all cases; still show representative dynamic info:
         if (state === "ready") {
-          if (n <= 1) document.getElementById("bestRow").classList.add("active");
+          if (n <= 1)
+            document.getElementById("bestRow").classList.add("active");
           else document.getElementById("avgRow").classList.add("active");
           return;
         }
@@ -345,7 +361,8 @@
           return;
         }
         if (state === "completed") {
-          if (n <= 1) document.getElementById("bestRow").classList.add("active");
+          if (n <= 1)
+            document.getElementById("bestRow").classList.add("active");
           else document.getElementById("worstRow").classList.add("active");
           return;
         }
