@@ -312,7 +312,22 @@
       }
 
       function peek() {
-        if (!queue.length) alert("Queue is empty");
+        if (!queue.length) {
+          alert("Queue is empty");
+          return;
+        }
+
+        // show front value
+        alert("Front element is: " + queue[0]);
+
+        // highlight front block
+        const blocks = document.querySelectorAll(".block");
+        if (blocks.length) {
+          blocks[0].style.background = "#16a34a";
+          setTimeout(() => {
+            blocks[0].style.background = "#2563eb";
+          }, 800);
+        }
       }
 
       function resetQueue() {
