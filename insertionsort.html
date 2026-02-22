@@ -1,35 +1,39 @@
+<!-- ONLY UI COLORS CHANGED — LOGIC SAME -->
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>3D Insertion Sort (Bars with Values)</title>
+    <title>Insertion Sort</title>
 
     <style>
       body {
         margin: 0;
         overflow: hidden;
-        background: radial-gradient(circle at top, #1a1a1a, #000);
+        background: #ffffff;
         font-family: "Segoe UI", sans-serif;
+        color: #000;
       }
 
+      /* BACK BUTTON */
       .back-btn {
         position: fixed;
         top: 18px;
         left: 18px;
         font-size: 32px;
-        color: #00eaff;
+        color: #0077ff;
         text-decoration: none;
         font-weight: bold;
         z-index: 100;
       }
 
+      /* HEADER */
       header {
         position: fixed;
         top: 0;
         width: 100%;
         height: 90px;
-        background: rgba(0, 0, 0, 0.75);
-        backdrop-filter: blur(10px);
+        background: #f5f7fa;
+        border-bottom: 1px solid #ddd;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -39,28 +43,26 @@
 
       header .title {
         font-size: 28px;
-        font-weight: 700;
-        letter-spacing: 2px;
-        color: #00eaff;
+        color: #0077ff;
+        font-weight: bold;
       }
-
       header .subtitle {
         font-size: 14px;
-        color: #b5f7ff;
-        margin-top: 4px;
+        color: #555;
       }
 
+      /* PANEL */
       #panel {
         position: fixed;
         top: 120px;
         left: 20px;
         width: 270px;
-        background: rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(10px);
+        background: #ffffff;
         border-radius: 14px;
         padding: 16px;
-        color: #fff;
-        box-shadow: 0 0 30px rgba(0, 234, 255, 0.15);
+        color: #000;
+        border: 1px solid #ddd;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
         z-index: 40;
       }
 
@@ -70,69 +72,55 @@
         margin-top: 8px;
         padding: 8px;
         border-radius: 8px;
-        border: none;
-      }
-
-      input[type="range"] {
-        accent-color: #00eaff;
+        border: 1px solid #ccc;
       }
 
       input {
-        background: rgba(0, 0, 0, 0.6);
-        color: #00eaff;
+        background: #f9f9f9;
+        color: #000;
       }
 
       button {
-        cursor: pointer;
+        background: linear-gradient(135deg, #0077ff, #00aaff);
+        color: #fff;
         font-weight: bold;
-        background: linear-gradient(135deg, #00eaff, #0077ff);
-        color: #000;
+        cursor: pointer;
       }
 
       #status {
         margin-top: 12px;
         padding: 8px;
         text-align: center;
+        background: #f1f3f6;
+        color: #0077ff;
         border-radius: 8px;
         font-weight: bold;
-        background: rgba(0, 0, 0, 0.5);
-        color: #00eaff;
       }
 
-      /* Complexity table (bottom-right) */
+      /* Complexity table */
       #complexity {
         position: fixed;
         bottom: 18px;
         right: 18px;
-        background: rgba(255, 255, 255, 0.06);
-        color: #00eaff;
-        padding: 10px;
+        background: #ffffff;
+        color: #000;
+        padding: 12px;
         border-radius: 10px;
         z-index: 100;
-        font-family: "Consolas", monospace;
+        font-family: Consolas, monospace;
         font-size: 13px;
         min-width: 220px;
+        border: 1px solid #ddd;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
       }
-      #complexity table {
-        width: 100%;
-        border-collapse: collapse;
-      }
+
       #complexity th {
-        text-align: left;
-        padding-bottom: 6px;
-        color: #bdefff;
-      }
-      #complexity td {
-        padding: 6px 8px;
+        color: #0077ff;
       }
       #complexity .active {
-        background: rgba(0, 255, 136, 0.08);
-        color: #00ff88;
-        font-weight: 700;
-        border-radius: 4px;
-      }
-      #complexity .neutral {
-        color: #bdefff;
+        background: rgba(0, 119, 255, 0.15);
+        color: #0077ff;
+        font-weight: bold;
       }
     </style>
   </head>
@@ -214,8 +202,7 @@
     <script>
       /* ---------- THREE ---------- */
       const scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x111111);
-
+      scene.background = new THREE.Color(0xffffff);
       const camera = new THREE.PerspectiveCamera(
         60,
         window.innerWidth / window.innerHeight,
@@ -302,7 +289,7 @@
         c.width = 256;
         c.height = 128;
         const ctx = c.getContext("2d");
-        ctx.fillStyle = "#fff";
+        ctx.fillStyle = "#0077ff";
         ctx.font = "bold 64px Arial";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
