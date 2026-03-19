@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>3D Bubble Sort – Step-by-step</title>
+
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: #ffffff;
+        font-family: "Segoe UI", sans-serif;
+      }
+
+      /* BACK BUTTON */
+      .back-btn {
+        position: fixed;
+        top: 18px;
+        left: 18px;
+        font-size: 32px;
+        color: #0077ff;
+        text-decoration: none;
+        font-weight: bold;
+        z-index: 100;
+      }
+
+      /* HEADER */
+      header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        height: 90px;
+        background: #f5f7fa;
+        border-bottom: 1px solid #ddd;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 50;
+      }
+
+      header .title {
+        font-size: 28px;
+        color: #0077ff;
+      }
+      header .subtitle {
+        font-size: 14px;
+        color: #555;
+      }
+
+      /* PANEL */
+      #panel {
+        position: fixed;
+        top: 120px;
+        left: 20px;
+        width: 270px;
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 16px;
+        color: #000;
+        z-index: 40;
+        border: 1px solid #ddd;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      input,
+      button {
+        width: 100%;
+        margin-top: 8px;
+        padding: 8px;
+        border-radius: 8px;
+      }
+
+      input {
+        background: #f9f9f9;
+        color: #000;
+        border: 1px solid #ccc;
+      }
+
+      button {
+        background: linear-gradient(135deg, #0077ff, #00aaff);
+        color: #fff;
+        font-weight: bold;
+        border: none;
+      }
+
+      input[type="range"] {
+        accent-color: #0077ff;
+      }
+
+      #status {
+        margin-top: 12px;
+        padding: 8px;
+        text-align: center;
+        background: #f1f3f6;
+        color: #0077ff;
+        border-radius: 8px;
+      }
+
+      /* CODE HIGHLIGHTER (UNCHANGED STRUCTURE) */
+      .codebox {
+        margin-top: 14px;
+        background: #ffffff;
+        color: #000;
+        padding: 10px;
+        border-radius: 10px;
+        font-family: Consolas;
+        border: 1px solid #ddd;
+      }
+
+      /* COMPLEXITY */
+      #complexity {
+        position: fixed;
+        bottom: 18px;
+        right: 18px;
+        background: #ffffff;
+        color: #000;
+        padding: 10px;
+        border-radius: 10px;
+        z-index: 100;
+        font-family: Consolas, monospace;
+        font-size: 13px;
+        min-width: 220px;
+        border: 1px solid #ddd;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      }
+      #complexity th {
+        color: #0077ff;
+      }
+      #complexity .active {
+        background: rgba(0, 119, 255, 0.15);
+        color: #0077ff;
+        font-weight: bold;
+      }
+      .flash-card {
+        position: fixed;
+        top: 140px;
+        left: 380px;
+        right: 60px;
+        bottom: 60px;
+        background: #ffffff;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        z-index: 5;
+      }
+
+      #complexity {
+        position: absolute;
+        bottom: 16px;
+        right: 16px;
+      }
+      button:disabled {
+        background: #cccccc;
+        color: #666;
+        cursor: not-allowed;
+        opacity: 0.7;
+      }
+    </style>
+  </head>
+
+  <body>
+    <a href="index.html" class="back-btn">←</a>
+
+    <header>
+      <div class="title">Bubble Sort</div>
+      <div class="subtitle">Step-by-step execution</div>
+      <div id="processingText" style="font-size: 14px; color: #ff8800"></div>
+    </header>
+
+    <div id="panel">
+      <input id="arrayInput" value="5,3,8,4,2,7" />
+      <button id="generateBtn" onclick="generate()">Generate</button>
+      <button id="startBtn" onclick="start()" disabled>▶ Start</button>
+      <button id="pauseBtn" onclick="pause()" disabled>⏸ Pause</button>
+      <button id="resetBtn" onclick="reset()" disabled>🔄 Reset</button>
+
+      <input id="speed" type="range" min="1" max="100" value="50" />
+      <div id="status">Status: Ready</div>
+
+      <!-- CODE HIGHLIGHTER KEPT -->
+      <div class="codebox">
+        <div id="l1">for (i = 0; i &lt; n-1; i++)</div>
+        <div id="l2">&nbsp;&nbsp;for (j = 0; j &lt; n-i-1; j++)</div>
+        <div id="l3">&nbsp;&nbsp;&nbsp;&nbsp;if (arr[j] &gt; arr[j+1])</div>
+        <div id="l4">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;swap(arr[j], arr[j+1])
+        </div>
+      </div>
+    </div>
+    <div class="flash-card" id="card">
+      <div id="complexity">
+        <table>
+          <thead>
+            <tr>
+              <th>Case</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="bestRow">
+              <td>Best</td>
+              <td>O(n)</td>
+            </tr>
+            <tr id="avgRow">
+              <td>Average</td>
+              <td>O(n²)</td>
+            </tr>
+            <tr id="worstRow">
+              <td>Worst</td>
+              <td>O(n²)</td>
+            </tr>
+            <tr>
+              <td>Space</td>
+              <td>O(1)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+
+    <script>
+      /* THREE SETUP */
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xffffff); // WHITE BACKGROUND
+
+      const camera = new THREE.PerspectiveCamera(
+        60,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000,
+      );
+      camera.position.set(0, 10, 18);
+      camera.lookAt(0, 4, 0);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+
+      renderer.domElement.style.position = "fixed";
+      renderer.domElement.style.zIndex = "1";
+      const card = document.getElementById("card");
+
+      renderer.setSize(card.clientWidth, card.clientHeight);
+      renderer.domElement.style.position = "absolute";
+      renderer.domElement.style.top = "0";
+      renderer.domElement.style.left = "0";
+
+      card.appendChild(renderer.domElement);
+
+      scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+      const light = new THREE.DirectionalLight(0xffffff, 1.2);
+      light.position.set(5, 10, 5);
+      scene.add(light);
+
+      const group = new THREE.Group();
+      scene.add(group);
+
+      /* ROTATION KEPT */
+      let mouseDown = false,
+        lastX = 0,
+        lastY = 0,
+        allowRotation = true;
+      const panel = document.getElementById("panel");
+      panel.addEventListener("mouseenter", () => (allowRotation = false));
+      panel.addEventListener("mouseleave", () => (allowRotation = true));
+
+      window.addEventListener("mousedown", (e) => {
+        if (!allowRotation) return;
+        mouseDown = true;
+        lastX = e.clientX;
+        lastY = e.clientY;
+      });
+      window.addEventListener("mouseup", () => (mouseDown = false));
+      window.addEventListener("mousemove", (e) => {
+        if (!mouseDown || !allowRotation) return;
+        group.rotation.y += (e.clientX - lastX) * 0.005;
+        group.rotation.x += (e.clientY - lastY) * 0.003;
+        lastX = e.clientX;
+        lastY = e.clientY;
+      });
+      let processingInterval;
+
+      function startProcessingText() {
+        const el = document.getElementById("processingText");
+        let dots = 0;
+
+        processingInterval = setInterval(() => {
+          dots = (dots + 1) % 4;
+          el.innerText = "Processing" + ".".repeat(dots);
+        }, 400);
+      }
+
+      function stopProcessingText() {
+        clearInterval(processingInterval);
+        document.getElementById("processingText").innerText = "";
+      }
+
+      /* DATA */
+      let array = [],
+        bars = [],
+        i = 0,
+        j = 0,
+        phase = 0;
+      let running = false,
+        lastTime = 0;
+
+      function highlight(id) {
+        ["l1", "l2", "l3", "l4"].forEach((x) => {
+          const el = document.getElementById(x);
+          el.style.background = "white";
+          el.style.fontWeight = "normal";
+        });
+        if (id) {
+          const el = document.getElementById(id);
+          el.style.background = "#dbeafe";
+          el.style.fontWeight = "bold";
+        }
+      }
+
+      function makeLabel(text) {
+        const c = document.createElement("canvas");
+        c.width = 256;
+        c.height = 128;
+        const ctx = c.getContext("2d");
+        ctx.fillStyle = "#0077ff";
+        ctx.font = "bold 64px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(text, 128, 64);
+        const t = new THREE.CanvasTexture(c);
+        const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t }));
+        s.scale.set(2.2, 1.1, 1);
+        return s;
+      }
+
+      function createBars() {
+        group.clear();
+        bars = [];
+        const spacing = 1.5;
+        const max = Math.max(...array);
+
+        array.forEach((v, idx) => {
+          const h = (v / max) * 8 + 0.5;
+          const bar = new THREE.Mesh(
+            new THREE.BoxGeometry(1, h, 1),
+            new THREE.MeshStandardMaterial({ color: 0x0077ff }),
+          );
+          bar.position.set(
+            idx * spacing - ((array.length - 1) * spacing) / 2,
+            h / 2,
+            0,
+          );
+          const lb = makeLabel(v.toString());
+          lb.position.set(bar.position.x, -1.1, 0);
+          bar.userData.label = lb;
+          group.add(bar, lb);
+          bars.push(bar);
+        });
+      }
+
+      function swap(a, b) {
+        // swap values
+        [array[a], array[b]] = [array[b], array[a]];
+
+        // swap bars
+        [bars[a], bars[b]] = [bars[b], bars[a]];
+
+        // swap positions (bars)
+        const tempX = bars[a].position.x;
+        bars[a].position.x = bars[b].position.x;
+        bars[b].position.x = tempX;
+
+        // ✅ MOVE LABELS ALSO
+        const labelA = bars[a].userData.label;
+        const labelB = bars[b].userData.label;
+
+        const tempLX = labelA.position.x;
+        labelA.position.x = labelB.position.x;
+        labelB.position.x = tempLX;
+      }
+
+      function generate() {
+        running = false;
+
+        const raw = document
+          .getElementById("arrayInput")
+          .value.split(",")
+          .map(Number);
+
+        if (raw.length > 10) {
+          alert("Maximum 10 elements allowed!");
+          return;
+        }
+
+        array = raw;
+        i = 0;
+        j = 0;
+
+        createBars();
+
+        // reset colors (important)
+        bars.forEach((bar) => bar.material.color.set(0x0077ff));
+
+        document.getElementById("status").innerText = "Click Start to sort";
+
+        // ✅ ENABLE
+        document.getElementById("startBtn").disabled = false;
+        document.getElementById("pauseBtn").disabled = false;
+        document.getElementById("resetBtn").disabled = false;
+        document.getElementById("generateBtn").disabled = true;
+      }
+
+      function start() {
+        running = true;
+        startProcessingText();
+      }
+      function pause() {
+        running = false;
+        stopProcessingText();
+      }
+
+      function reset() {
+        running = false;
+        stopProcessingText();
+
+        group.clear();
+        bars = [];
+        i = 0;
+        j = 0;
+
+        document.getElementById("status").innerText =
+          "Enter array and click Generate";
+
+        // DISABLE AGAIN
+        document.getElementById("startBtn").disabled = true;
+        document.getElementById("pauseBtn").disabled = true;
+        document.getElementById("resetBtn").disabled = true;
+        document.getElementById("generateBtn").disabled = false;
+      }
+      function step() {
+        if (i >= array.length - 1) {
+          // ✅ ALL SORTED → make everything green
+          bars.forEach((bar) => bar.material.color.set(0x00cc66));
+
+          running = false;
+          stopProcessingText();
+          document.getElementById("status").innerText = "Sorting Completed!";
+          return;
+        }
+
+        // Highlight current comparison
+        bars[j].material.color.set(0xffd700);
+        bars[j + 1].material.color.set(0xffd700);
+
+        if (array[j] > array[j + 1]) {
+          swap(j, j + 1);
+        }
+
+        j++;
+
+        if (j >= array.length - i - 1) {
+          // ✅ LAST ELEMENT OF THIS PASS IS SORTED
+          bars[array.length - i - 1].material.color.set(0x00cc66); // GREEN
+
+          j = 0;
+          i++;
+        }
+      }
+      function animate(time) {
+        requestAnimationFrame(animate);
+        if (running) {
+          const speed = document.getElementById("speed").value;
+          const delay = 2100 - speed * 20;
+          if (time - lastTime > delay) {
+            step();
+            lastTime = time;
+          }
+        }
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+      window.onload = function () {
+        running = false;
+
+        document.getElementById("startBtn").disabled = true;
+        document.getElementById("pauseBtn").disabled = true;
+        document.getElementById("resetBtn").disabled = true;
+
+        document.getElementById("status").innerText =
+          "Enter array and click Generate";
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,5 @@
+flask
+flask-cors
+cohere
+python-dotenv
+gunicorn

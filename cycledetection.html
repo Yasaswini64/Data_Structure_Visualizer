@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cycle Detection in Graph</title>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: radial-gradient(circle at top, #1a1a1a, #000);
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    /* ===== BACK BUTTON ===== */
+    .back-btn {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      font-size: 34px;
+      color: #00eaff;
+      text-decoration: none;
+      font-weight: bold;
+      padding: 6px 12px;
+      border-radius: 50%;
+      z-index: 100;
+    }
+
+    .back-btn:hover {
+      background: rgba(0, 234, 255, 0.15);
+    }
+
+    header {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      text-align: center;
+      padding: 14px;
+      font-size: 26px;
+      font-weight: 700;
+      color: #00eaff;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 50;
+    }
+
+    /* LEFT PANEL */
+    #panel {
+      position: absolute;
+      top: 80px;
+      left: 20px;
+      width: 320px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 14px;
+      padding: 16px;
+      color: #fff;
+      z-index: 40;
+    }
+
+    input,
+    button,
+    textarea {
+      width: 100%;
+      margin-top: 8px;
+      padding: 8px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    textarea {
+      height: 80px;
+      resize: none;
+      background: rgba(0, 0, 0, 0.6);
+      color: #00eaff;
+    }
+
+    input {
+      background: rgba(0, 0, 0, 0.6);
+      color: #00eaff;
+    }
+
+    button {
+      font-weight: bold;
+      background: linear-gradient(135deg, #00eaff, #0077ff);
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 12px;
+      padding: 8px;
+      background: rgba(0, 0, 0, 0.6);
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- Back Button -->
+<a href="graphs.html" class="back-btn">←</a>
+
+<header>CYCLE DETECTION IN GRAPH (UNDIRECTED)</header>
+
+<div id="panel">
+  <input id="nodesInput" placeholder="Nodes (e.g. A,B,C,D)" />
+  <textarea id="edgesInput" placeholder="Edges (e.g. A-B,B-C,C-A)"></textarea>
+  <button onclick="generateGraph()">Generate Graph</button>
+  <button onclick="detectCycle()">▶ Detect Cycle</button>
+  <div id="result">Result: —</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+
+<script>
+/* ---------- SCENE ---------- */
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x111111);
+
+const camera = new THREE.PerspectiveCamera(
+  60,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+camera.position.set(0, 12, 26);
+camera.lookAt(0, 0, 0);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.domElement.style.position = "fixed";
+renderer.domElement.style.top = "0";
+renderer.domElement.style.left = "0";
+renderer.domElement.style.zIndex = "1";
+document.body.appendChild(renderer.domElement);
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+scene.add(new THREE.DirectionalLight(0xffffff, 1));
+
+/* ---------- DATA ---------- */
+let graph = {}, nodes = {}, edges = [];
+const group = new THREE.Group();
+scene.add(group);
+
+/* ---------- LABEL ---------- */
+function createLabel(text) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 256;
+  canvas.height = 256;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#fff";
+  ctx.font = "bold 90px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, 128, 128);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  const sprite = new THREE.Sprite(
+    new THREE.SpriteMaterial({
+      map: texture,
+      transparent: true,
+      depthTest: false,
+    })
+  );
+  sprite.scale.set(1.2, 1.2, 1);
+  return sprite;
+}
+
+/* ---------- NODE ---------- */
+function createNode(name, x, y) {
+  const mesh = new THREE.Mesh(
+    new THREE.SphereGeometry(0.9, 32, 32),
+    new THREE.MeshStandardMaterial({ color: 0x0077ff })
+  );
+  mesh.position.set(x, y, 0);
+  mesh.add(createLabel(name));
+  nodes[name] = mesh;
+  group.add(mesh);
+}
+
+/* ---------- EDGE ---------- */
+function drawEdge(a, b) {
+  const geo = new THREE.BufferGeometry().setFromPoints([
+    nodes[a].position,
+    nodes[b].position,
+  ]);
+  const line = new THREE.Line(
+    geo,
+    new THREE.LineBasicMaterial({ color: 0xffffff })
+  );
+  group.add(line);
+  edges.push({ u: a, v: b, line });
+}
+
+/* ---------- GRAPH ---------- */
+function generateGraph() {
+  group.clear();
+  graph = {};
+  nodes = {};
+  edges = [];
+  result.innerText = "Result: —";
+
+  const list = nodesInput.value.split(",");
+  const angle = (2 * Math.PI) / list.length;
+  const radius = 8;
+
+  list.forEach((n, i) => {
+    const name = n.trim();
+    createNode(name, Math.cos(i * angle) * radius, Math.sin(i * angle) * radius);
+    graph[name] = [];
+  });
+
+  edgesInput.value.split(",").forEach((e) => {
+    const [u, v] = e.split("-").map(x => x.trim());
+    if (graph[u] && graph[v]) {
+      graph[u].push(v);
+      graph[v].push(u);
+      drawEdge(u, v);
+    }
+  });
+}
+
+/* ---------- CYCLE DETECTION ---------- */
+function detectCycle() {
+  const visited = new Set();
+  let hasCycle = false;
+
+  function dfs(u, parent) {
+    visited.add(u);
+    nodes[u].material.color.set(0xffaa00);
+
+    for (const v of graph[u]) {
+      if (!visited.has(v)) {
+        if (dfs(v, u)) return true;
+      } else if (v !== parent) {
+        nodes[u].material.color.set(0xff0000);
+        nodes[v].material.color.set(0xff0000);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  for (const node in graph) {
+    if (!visited.has(node)) {
+      if (dfs(node, null)) {
+        hasCycle = true;
+        break;
+      }
+    }
+  }
+
+  if (hasCycle) {
+    result.innerText = "Result: Cycle Detected";
+    result.style.color = "#ff4444";
+  } else {
+    result.innerText = "Result: No Cycle";
+    result.style.color = "#00ff88";
+  }
+}
+
+/* ---------- RENDER ---------- */
+function animate() {
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+
+</body>
+</html>

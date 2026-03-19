@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stack & Queue</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top, #f0f4f8, #ffffff);
+      color: #333;
+    }
+
+    header {
+      text-align: center;
+      padding: 25px 10px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #0077ff;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    header span {
+      display: block;
+      font-size: 14px;
+      color: #555;
+      margin-top: 4px;
+    }
+
+    .container {
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 6px 25px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 35px rgba(0,0,0,0.15);
+    }
+
+    .card h2 {
+      color: #0077ff;
+      margin-bottom: 15px;
+      font-size: 24px;
+    }
+
+    .card p {
+      font-size: 15px;
+      color: #333;
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+
+    .card ol {
+      padding-left: 20px;
+      margin-bottom: 15px;
+      color: #555;
+    }
+
+    .card strong {
+      color: #0077ff;
+    }
+
+    .card button {
+      padding: 12px 22px;
+      border: none;
+      border-radius: 25px;
+      background: linear-gradient(135deg, #00bfff, #0077ff);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+      transition: opacity 0.2s ease;
+    }
+
+    .card button:hover {
+      opacity: 0.9;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      font-size: 13px;
+      color: #555;
+      background: rgba(255,255,255,0.8);
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  Stack & Queue
+  <span>Learn & Visualize Stack and Queue Operations</span>
+</header>
+
+<div class="container">
+
+  <!-- Stack Card -->
+  <div class="card">
+    <h2>Stack</h2>
+    <p><strong>Overview:</strong> A Stack is a linear data structure that follows <strong>Last In, First Out (LIFO)</strong> principle. The last element added is the first one to be removed.</p>
+    <p><strong>Use Cases:</strong> Undo functionality in editors, browser history, expression evaluation (postfix/prefix), function call stack.</p>
+    <p><strong>Operations:</strong></p>
+    <ol>
+      <li><strong>Push:</strong> Add an element on top of the stack.</li>
+      <li><strong>Pop:</strong> Remove the top element from the stack.</li>
+      <li><strong>Peek/Top:</strong> View the top element without removing it.</li>
+      <li><strong>isEmpty:</strong> Check if the stack is empty.</li>
+    </ol>
+    <p><strong>Example:</strong> Stack = [], push 5 → [5], push 3 → [5,3], pop → [5], peek → 5</p>
+    <button onclick="window.location.href='stack.html'">Visualize</button>
+  </div>
+
+  <!-- Queue Card -->
+  <div class="card">
+    <h2>Queue</h2>
+    <p><strong>Overview:</strong> A Queue is a linear data structure that follows <strong>First In, First Out (FIFO)</strong> principle. The first element added is the first one to be removed.</p>
+    <p><strong>Use Cases:</strong> Task scheduling, print job management, CPU task scheduling, buffering in streaming applications.</p>
+    <p><strong>Operations:</strong></p>
+    <ol>
+      <li><strong>Enqueue:</strong> Add an element at the rear of the queue.</li>
+      <li><strong>Dequeue:</strong> Remove the element from the front of the queue.</li>
+      <li><strong>Front:</strong> View the front element without removing it.</li>
+      <li><strong>isEmpty:</strong> Check if the queue is empty.</li>
+    </ol>
+    <p><strong>Example:</strong> Queue = [], enqueue 5 → [5], enqueue 3 → [5,3], dequeue → [3], front → 3</p>
+    <button onclick="window.location.href='queue.html'">Visualize</button>
+  </div>
+
+</div>
+
+<footer>
+  © 2025 Data Structure Visualizer
+</footer>
+
+</body>
+</html>

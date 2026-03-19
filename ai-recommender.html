@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>AI Algorithm Recommender</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", sans-serif;
+        background: #f5f7fb;
+        color: #333;
+        text-align: center;
+      }
+
+      /* HEADER */
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        background: white;
+        padding: 22px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .back-btn {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 34px;
+        background: none;
+        border: none;
+        color: #2563eb;
+        cursor: pointer;
+      }
+
+      .header-text {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      header h1 {
+        margin: 0;
+        color: #2563eb;
+        font-weight: 600;
+      }
+
+      header p {
+        margin-top: 6px;
+        margin-bottom: 0;
+        color: #555;
+      }
+
+      /* MAIN CONTAINER */
+      .container {
+        margin-top: 50px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+
+      /* TEXTAREA */
+      textarea {
+        width: 60%;
+        height: 120px;
+        padding: 14px;
+        border-radius: 12px;
+        border: 1px solid #ddd;
+        font-size: 16px;
+        outline: none;
+      }
+
+      /* BUTTON */
+      button {
+        margin-top: 10px;
+        padding: 14px 28px;
+        border-radius: 12px;
+        border: none;
+        background: #2563eb;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #1e40af;
+      }
+
+      /* RESULT CARD */
+      .result {
+        margin-top: 25px;
+        width: 60%;
+        background: white;
+        padding: 22px;
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        font-size: 18px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <button class="back-btn" onclick="window.location.href = 'index.html'">
+        ←
+      </button>
+      <div class="header-text">
+        <h1>🤖 AI Algorithm Recommender</h1>
+        <p>Ask any DSA problem and get the best algorithm</p>
+      </div>
+    </header>
+
+    <div class="container">
+      <textarea
+        id="question"
+        placeholder="Example: Find the shortest path in a weighted graph"
+      ></textarea>
+
+      <br />
+
+      <button onclick="askAI()">Recommend Algorithm</button>
+
+      <div class="result" id="result">AI response will appear here</div>
+    </div>
+
+    <script>
+      async function askAI() {
+        let question = document.getElementById("question").value;
+
+        document.getElementById("result").innerText = "Thinking...";
+
+        const response = await fetch("http://127.0.0.1:5000/ask", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            question: question,
+          }),
+        });
+
+        const data = await response.json();
+
+        document.getElementById("result").innerText = data.answer;
+      }
+    </script>
+  </body>
+</html>

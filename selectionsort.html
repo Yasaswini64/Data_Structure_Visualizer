@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>3D Selection Sort (Bars with Values)</title>
+
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: #ffffff;
+        font-family: "Segoe UI", sans-serif;
+        color: #000;
+      }
+
+      .back-btn {
+        position: fixed;
+        top: 18px;
+        left: 18px;
+        font-size: 32px;
+        color: #0077ff;
+        text-decoration: none;
+        font-weight: bold;
+        z-index: 100;
+      }
+
+      header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        height: 90px;
+        background: #f5f7fa;
+        border-bottom: 1px solid #ddd;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 50;
+      }
+
+      header .title {
+        font-size: 28px;
+        color: #0077ff;
+        font-weight: bold;
+      }
+      header .subtitle {
+        font-size: 14px;
+        color: #555;
+      }
+
+      #panel {
+        position: fixed;
+        top: 120px;
+        left: 20px;
+        width: 270px;
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 16px;
+        color: #000;
+        border: 1px solid #ddd;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        z-index: 40;
+      }
+
+      input,
+      button {
+        width: 100%;
+        margin-top: 8px;
+        padding: 8px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+      }
+
+      input {
+        background: #f9f9f9;
+        color: #000;
+      }
+
+      button {
+        background: linear-gradient(135deg, #0077ff, #00aaff);
+        color: #fff;
+        font-weight: bold;
+      }
+
+      #status {
+        margin-top: 12px;
+        padding: 8px;
+        text-align: center;
+        background: #f1f3f6;
+        color: #0077ff;
+        border-radius: 8px;
+        font-weight: bold;
+      }
+      .flash-card {
+        position: fixed;
+        top: 140px;
+        left: 380px;
+        right: 60px;
+        bottom: 60px;
+        background: #fff;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        z-index: 5;
+      }
+
+      button:disabled {
+        background: #ccc;
+        color: #666;
+        cursor: not-allowed;
+        opacity: 0.7;
+      }
+      #complexity {
+        background: #ffffff;
+        color: #000;
+        padding: 12px;
+        border-radius: 10px;
+        z-index: 100;
+        font-family: Consolas, monospace;
+        font-size: 13px;
+        min-width: 220px;
+        border: 1px solid #ddd;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        position: absolute;
+        bottom: 16px;
+        right: 16px;
+        z-index: 20;
+      }
+
+      #complexity th {
+        color: #0077ff;
+      }
+
+      #complexity .active {
+        background: rgba(0, 119, 255, 0.15);
+        color: #0077ff;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <a href="index.html" class="back-btn">←</a>
+
+    <header>
+      <div class="title">Selection Sort</div>
+      <div class="subtitle">Step-by-step execution</div>
+      <div id="processingText" style="font-size: 14px; color: #ff8800"></div>
+    </header>
+    <div id="panel">
+      <input id="arrayInput" value="5,3,8,4,2,7" />
+
+      <button id="generateBtn" onclick="generate()">Generate</button>
+      <button id="startBtn" onclick="start()" disabled>▶ Start</button>
+      <button id="pauseBtn" onclick="pause()" disabled>⏸ Pause</button>
+      <button id="resetBtn" onclick="reset()" disabled>🔄 Reset</button>
+
+      <!-- SPEED (same UX as other visualizers) -->
+      <input id="speed" type="range" min="1" max="100" value="50" />
+      <div id="status">Status: Ready</div>
+
+      <div
+        style="
+          margin-top: 14px;
+          background: white;
+          color: black;
+          padding: 10px;
+          border-radius: 10px;
+          font-family: Consolas;
+        "
+      >
+        <div id="l1">for (i = 0; i &lt; n-1; i++)</div>
+        <div id="l2">&nbsp;&nbsp;minIndex = i</div>
+        <div id="l3">&nbsp;&nbsp;for (j = i+1; j &lt; n; j++)</div>
+        <div id="l4">
+          &nbsp;&nbsp;&nbsp;&nbsp;if (arr[j] &lt; arr[minIndex])
+        </div>
+        <div id="l5">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;minIndex = j</div>
+        <div id="l6">&nbsp;&nbsp;swap(arr[i], arr[minIndex])</div>
+      </div>
+    </div>
+    <!-- Complexity table in bottom-right -->
+    <div class="flash-card" id="card">
+      <div id="complexity" aria-hidden="false">
+        <table>
+          <thead>
+            <tr>
+              <th>Case</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="bestRow">
+              <td>Best</td>
+              <td>O(n²)</td>
+            </tr>
+            <tr id="avgRow">
+              <td>Average</td>
+              <td>O(n²)</td>
+            </tr>
+            <tr id="worstRow">
+              <td>Worst</td>
+              <td>O(n²)</td>
+            </tr>
+            <tr id="spaceRow" class="neutral">
+              <td>Space</td>
+              <td>O(1)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+
+    <script>
+      /* ---------- THREE ---------- */
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xffffff);
+
+      const camera = new THREE.PerspectiveCamera(
+        60,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000,
+      );
+      camera.position.set(0, 10, 18);
+      camera.lookAt(0, 5, 0);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+
+      renderer.domElement.style.position = "fixed";
+      renderer.domElement.style.zIndex = "1";
+      const card = document.getElementById("card");
+
+      renderer.setSize(card.clientWidth, card.clientHeight);
+
+      renderer.domElement.style.position = "absolute";
+      renderer.domElement.style.top = "0";
+      renderer.domElement.style.left = "0";
+      renderer.domElement.style.zIndex = "1";
+      renderer.domElement.style.pointerEvents = "none";
+
+      card.appendChild(renderer.domElement);
+      scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+      const light = new THREE.DirectionalLight(0xffffff, 1);
+      light.position.set(5, 10, 5);
+      scene.add(light);
+
+      const group = new THREE.Group();
+      scene.add(group);
+
+      /* ---------- DATA ---------- */
+      let array = [],
+        bars = [];
+      let i = 0,
+        j = 0,
+        minIndex = 0,
+        phase = 0;
+      let running = false,
+        lastTime = 0;
+
+      /* ---------- ROTATION ---------- */
+      let mouseDown = false,
+        lastX = 0,
+        lastY = 0,
+        allowRotation = true;
+      const panel = document.getElementById("panel");
+
+      panel.addEventListener("mouseenter", () => (allowRotation = false));
+      panel.addEventListener("mouseleave", () => (allowRotation = true));
+
+      window.addEventListener("mousedown", (e) => {
+        if (!allowRotation) return;
+        mouseDown = true;
+        lastX = e.clientX;
+        lastY = e.clientY;
+      });
+      window.addEventListener("mouseup", () => (mouseDown = false));
+      window.addEventListener("mousemove", (e) => {
+        if (!mouseDown || !allowRotation) return;
+        group.rotation.y += (e.clientX - lastX) * 0.005;
+        group.rotation.x += (e.clientY - lastY) * 0.003;
+        lastX = e.clientX;
+        lastY = e.clientY;
+      });
+
+      let processingInterval;
+
+      function startProcessingText() {
+        const el = document.getElementById("processingText");
+        let dots = 0;
+
+        processingInterval = setInterval(() => {
+          dots = (dots + 1) % 4;
+          el.innerText = "Processing" + ".".repeat(dots);
+        }, 400);
+      }
+
+      function stopProcessingText() {
+        clearInterval(processingInterval);
+        processingInterval = null;
+        document.getElementById("processingText").innerText = "";
+      }
+      /* ---------- HIGHLIGHT ---------- */
+      function highlight(id) {
+        ["l1", "l2", "l3", "l4", "l5", "l6"].forEach((x) => {
+          const el = document.getElementById(x);
+          if (el) {
+            el.style.background = "white";
+            el.style.fontWeight = "normal";
+          }
+        });
+        if (id) {
+          const el = document.getElementById(id);
+          if (el) {
+            el.style.background = "#cceeff";
+            el.style.fontWeight = "bold";
+          }
+        }
+      }
+
+      /* ---------- LABEL ---------- */
+      function makeLabel(text) {
+        const c = document.createElement("canvas");
+        c.width = 256;
+        c.height = 128;
+        const ctx = c.getContext("2d");
+        ctx.fillStyle = "#222";
+        ctx.font = "bold 64px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(text, 128, 64);
+        const t = new THREE.CanvasTexture(c);
+        const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t }));
+        s.scale.set(2.2, 1.1, 1);
+        return s;
+      }
+
+      /* ---------- CREATE BARS ---------- */
+      function createBars() {
+        group.clear();
+        bars = [];
+        i = 0;
+        j = 0;
+        minIndex = 0;
+        phase = 0;
+        const spacing = 1.5;
+        const max = Math.max(...array, 1);
+
+        array.forEach((v, idx) => {
+          const h = (v / max) * 8 + 0.5;
+          const bar = new THREE.Mesh(
+            new THREE.BoxGeometry(1, h, 1),
+            new THREE.MeshStandardMaterial({ color: 0x0077ff }),
+          );
+          bar.position.set(
+            idx * spacing - ((array.length - 1) * spacing) / 2,
+            h / 2,
+            0,
+          );
+
+          const lb = makeLabel(v.toString());
+          lb.position.set(bar.position.x, -1.1, 0);
+          bar.userData.label = lb;
+
+          group.add(bar, lb);
+          bars.push(bar);
+        });
+      }
+
+      /* ---------- SWAP ---------- */
+      function swap(a, b) {
+        [array[a], array[b]] = [array[b], array[a]];
+        [bars[a], bars[b]] = [bars[b], bars[a]];
+
+        const x = bars[a].position.x;
+        bars[a].position.x = bars[b].position.x;
+        bars[b].position.x = x;
+
+        [bars[a].userData.label.position.x, bars[b].userData.label.position.x] =
+          [
+            bars[b].userData.label.position.x,
+            bars[a].userData.label.position.x,
+          ];
+      }
+      /* ---------- COMPLEXITY UI ---------- */
+      function clearComplexityHighlight() {
+        ["bestRow", "avgRow", "worstRow"].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.classList.remove("active");
+        });
+      }
+      function updateComplexity(state) {
+        // state: 'ready' | 'running' | 'completed'
+        clearComplexityHighlight();
+        const n = array.length;
+        // Selection sort comparisons are O(n^2) in all cases; still show representative dynamic info:
+        if (state === "ready") {
+          if (n <= 1)
+            document.getElementById("bestRow").classList.add("active");
+          else document.getElementById("avgRow").classList.add("active");
+          return;
+        }
+        if (state === "running") {
+          document.getElementById("avgRow").classList.add("active");
+          return;
+        }
+        if (state === "completed") {
+          if (n <= 1)
+            document.getElementById("bestRow").classList.add("active");
+          else document.getElementById("worstRow").classList.add("active");
+          return;
+        }
+      }
+      /* ---------- GENERATE ---------- */
+      function generate() {
+        running = false;
+
+        const raw = document
+          .getElementById("arrayInput")
+          .value.split(",")
+          .map(Number);
+
+        if (raw.length === 0 || raw.some(isNaN)) {
+          alert("Enter valid numbers!");
+          return;
+        }
+
+        if (raw.length > 10) {
+          alert("Maximum 10 elements allowed!");
+          return;
+        }
+
+        array = raw;
+
+        createBars();
+        highlight(null);
+
+        document.getElementById("status").innerText =
+          "Click Start to begin sorting";
+
+        updateComplexity("ready");
+
+        // ✅ ENABLE
+        document.getElementById("startBtn").disabled = false;
+        document.getElementById("pauseBtn").disabled = false;
+        document.getElementById("resetBtn").disabled = false;
+        document.getElementById("generateBtn").disabled = true;
+      }
+
+      /* ---------- STEP ---------- */
+      function step() {
+        if (i >= array.length - 1) {
+          document.getElementById("status").innerText = "Sorting Completed";
+
+          bars.forEach((b) => b.material.color.set(0x00cc66));
+
+          running = false;
+          stopProcessingText(); // 🔥 important
+          updateComplexity("completed");
+          return;
+        }
+
+        if (phase === 0) {
+          highlight("l1");
+          phase = 1;
+        } else if (phase === 1) {
+          highlight("l2");
+          minIndex = i;
+          j = i + 1;
+          phase = 2;
+        } else if (phase === 2) {
+          if (j < array.length) {
+            highlight("l3");
+            phase = 3;
+          } else phase = 5;
+        } else if (phase === 3) {
+          highlight("l4");
+          bars[j].material.color.set(0xffff00);
+          bars[minIndex].material.color.set(0xff00ff);
+          if (array[j] < array[minIndex]) phase = 4;
+          else {
+            bars[j].material.color.set(0x0077ff);
+            j++;
+            phase = 2;
+          }
+        } else if (phase === 4) {
+          highlight("l5");
+          bars[minIndex].material.color.set(0x0077ff);
+          minIndex = j;
+          j++;
+          phase = 2;
+        } else if (phase === 5) {
+          highlight("l6");
+          swap(i, minIndex); // green sorted
+          bars[i].material.color.set(0x00ff00);
+          i++;
+          phase = 0;
+        }
+
+        // update complexity display while running
+        updateComplexity("running");
+      }
+
+      window.onload = function () {
+        running = false;
+
+        document.getElementById("startBtn").disabled = true;
+        document.getElementById("pauseBtn").disabled = true;
+        document.getElementById("resetBtn").disabled = true;
+
+        document.getElementById("status").innerText =
+          "Enter array and click Generate";
+      };
+      /* ---------- CONTROLS ---------- */
+      function start() {
+        running = true;
+        startProcessingText();
+        updateComplexity("running");
+      }
+
+      function pause() {
+        running = false;
+        stopProcessingText();
+        updateComplexity("ready");
+      }
+
+      function reset() {
+        running = false;
+        stopProcessingText();
+
+        group.clear();
+        bars = [];
+        i = 0;
+        j = 0;
+        phase = 0;
+
+        document.getElementById("status").innerText =
+          "Enter array and click Generate";
+
+        document.getElementById("startBtn").disabled = true;
+        document.getElementById("pauseBtn").disabled = true;
+        document.getElementById("resetBtn").disabled = true;
+        document.getElementById("generateBtn").disabled = false;
+      }
+
+      /* ---------- LOOP ---------- */
+      function animate(time) {
+        requestAnimationFrame(animate);
+
+        if (running) {
+          const speed = document.getElementById("speed").value;
+          const delay = 2100 - speed * 20; // same as others
+          if (time - lastTime > delay) {
+            step();
+            lastTime = time;
+          }
+        }
+
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      /* ---------- RESIZE ---------- */
+      window.addEventListener("resize", () => {
+        const card = document.getElementById("card");
+
+        camera.aspect = card.clientWidth / card.clientHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(card.clientWidth, card.clientHeight);
+      });
+    </script>
+  </body>
+</html>

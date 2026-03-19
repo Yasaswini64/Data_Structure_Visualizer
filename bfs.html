@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BFS with Horizontal Queue</title>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: radial-gradient(circle at top, #1a1a1a, #000);
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    /* ===== BACK BUTTON ===== */
+    .back-btn {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      font-size: 34px;
+      color: #00eaff;
+      text-decoration: none;
+      font-weight: bold;
+      padding: 6px 12px;
+      border-radius: 50%;
+      z-index: 100;
+    }
+
+    .back-btn:hover {
+      background: rgba(0, 234, 255, 0.15);
+    }
+
+    header {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      text-align: center;
+      padding: 14px;
+      font-size: 26px;
+      font-weight: 700;
+      color: #00eaff;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 50;
+    }
+
+    /* LEFT PANEL */
+    #panel {
+      position: absolute;
+      top: 80px;
+      left: 20px;
+      width: 320px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 14px;
+      padding: 16px;
+      color: #fff;
+      z-index: 40;
+    }
+
+    /* RIGHT QUEUE PANEL */
+    #queuePanel {
+      position: absolute;
+      top: 80px;
+      right: 20px;
+      width: 420px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 14px;
+      padding: 16px;
+      color: #00eaff;
+      z-index: 40;
+    }
+
+    #queueHeader {
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    #queueWrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .queueLabel {
+      font-size: 14px;
+      width: 60px;
+      text-align: center;
+    }
+
+    #queue {
+      flex: 1;
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 6px 10px;
+    }
+
+    .queueItem {
+      min-width: 48px;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #00eaff, #0077ff);
+      color: #000;
+    }
+
+    input,
+    button,
+    textarea {
+      width: 100%;
+      margin-top: 8px;
+      padding: 8px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    textarea {
+      height: 80px;
+      resize: none;
+      background: rgba(0, 0, 0, 0.6);
+      color: #00eaff;
+    }
+
+    input {
+      background: rgba(0, 0, 0, 0.6);
+      color: #00eaff;
+    }
+
+    button {
+      font-weight: bold;
+      background: linear-gradient(135deg, #00eaff, #0077ff);
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 12px;
+      padding: 8px;
+      background: rgba(0, 0, 0, 0.6);
+      color: #00ff88;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- Back Button -->
+<a href="graphs.html" class="back-btn">←</a>
+
+<header>BREADTH FIRST SEARCH (GRAPH)</header>
+
+<div id="panel">
+  <input id="nodesInput" placeholder="Nodes (e.g. A,B,C,D)" />
+  <textarea id="edgesInput" placeholder="Edges (e.g. A-B,B-C,A-D)"></textarea>
+  <input id="sourceInput" placeholder="Source Node (e.g. A)" />
+  <button onclick="generateGraph()">Generate Graph</button>
+  <button onclick="startBFS()">▶ Start BFS</button>
+  <div id="result">Traversal: —</div>
+</div>
+
+<div id="queuePanel">
+  <div id="queueHeader">QUEUE</div>
+  <div id="queueWrapper">
+    <div class="queueLabel">FRONT</div>
+    <div id="queue"></div>
+    <div class="queueLabel">REAR</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+
+<script>
+/* ---------- SCENE ---------- */
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x111111);
+
+const camera = new THREE.PerspectiveCamera(
+  60,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+camera.position.set(0, 12, 26);
+camera.lookAt(0, 0, 0);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.domElement.style.position = "fixed";
+renderer.domElement.style.top = "0";
+renderer.domElement.style.left = "0";
+renderer.domElement.style.zIndex = "1";
+document.body.appendChild(renderer.domElement);
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+scene.add(new THREE.DirectionalLight(0xffffff, 1));
+
+/* ---------- DATA ---------- */
+let graph = {}, nodes = {}, bfsSteps = [], timer = null;
+let visualQueue = [];
+const group = new THREE.Group();
+scene.add(group);
+
+/* ---------- LABEL ---------- */
+function createLabel(text) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 256;
+  canvas.height = 256;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#fff";
+  ctx.font = "bold 90px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, 128, 128);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  const sprite = new THREE.Sprite(
+    new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false })
+  );
+  sprite.scale.set(1.2, 1.2, 1);
+  return sprite;
+}
+
+/* ---------- NODE ---------- */
+function createNode(name, x, y) {
+  const mesh = new THREE.Mesh(
+    new THREE.SphereGeometry(0.9, 32, 32),
+    new THREE.MeshStandardMaterial({ color: 0x0077ff })
+  );
+  mesh.position.set(x, y, 0);
+  mesh.add(createLabel(name));
+  nodes[name] = mesh;
+  group.add(mesh);
+}
+
+/* ---------- EDGE ---------- */
+function drawEdge(a, b) {
+  const geo = new THREE.BufferGeometry().setFromPoints([
+    nodes[a].position,
+    nodes[b].position,
+  ]);
+  group.add(new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0xffffff })));
+}
+
+/* ---------- GRAPH ---------- */
+function generateGraph() {
+  group.clear();
+  nodes = {};
+  graph = {};
+  bfsSteps = [];
+  visualQueue = [];
+  updateQueue();
+  clearInterval(timer);
+
+  const list = nodesInput.value.split(",");
+  const angle = (2 * Math.PI) / list.length;
+  const radius = 8;
+
+  list.forEach((n, i) => {
+    const name = n.trim();
+    createNode(name, Math.cos(i * angle) * radius, Math.sin(i * angle) * radius);
+    graph[name] = [];
+  });
+
+  edgesInput.value.split(",").forEach((e) => {
+    const [u, v] = e.split("-").map(x => x.trim());
+    if (graph[u] && graph[v]) {
+      graph[u].push(v);
+      graph[v].push(u);
+      drawEdge(u, v);
+    }
+  });
+}
+
+/* ---------- QUEUE UI ---------- */
+function updateQueue() {
+  const q = document.getElementById("queue");
+  q.innerHTML = "";
+  visualQueue.forEach(v => {
+    const div = document.createElement("div");
+    div.className = "queueItem";
+    div.innerText = v;
+    q.appendChild(div);
+  });
+}
+
+/* ---------- BFS ---------- */
+function startBFS() {
+  bfsSteps = [];
+  visualQueue = [];
+  updateQueue();
+  clearInterval(timer);
+
+  const src = sourceInput.value.trim();
+  if (!graph[src]) return;
+
+  const visited = new Set();
+  const q = [src];
+  visited.add(src);
+  bfsSteps.push({ type: "enqueue", node: src });
+
+  while (q.length) {
+    const u = q.shift();
+    bfsSteps.push({ type: "visit", node: u });
+
+    graph[u].forEach(v => {
+      if (!visited.has(v)) {
+        visited.add(v);
+        q.push(v);
+        bfsSteps.push({ type: "enqueue", node: v });
+      }
+    });
+    bfsSteps.push({ type: "dequeue" });
+  }
+
+  let i = 0, order = [];
+  timer = setInterval(() => {
+    if (i >= bfsSteps.length) {
+      clearInterval(timer);
+      result.innerText = "Traversal: " + order.join(" → ");
+      return;
+    }
+
+    const step = bfsSteps[i++];
+    if (step.type === "enqueue") visualQueue.push(step.node);
+    if (step.type === "visit") {
+      order.push(step.node);
+      nodes[step.node].material.color.set(0x00ff00);
+    }
+    if (step.type === "dequeue") visualQueue.shift();
+    updateQueue();
+  }, 900);
+}
+
+/* ---------- RENDER ---------- */
+function animate() {
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+
+</body>
+</html>
