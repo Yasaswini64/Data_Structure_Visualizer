@@ -68,7 +68,6 @@
         gap: 20px;
       }
 
-      /* TEXTAREA */
       textarea {
         width: 60%;
         height: 120px;
@@ -79,7 +78,6 @@
         outline: none;
       }
 
-      /* BUTTON */
       button {
         margin-top: 10px;
         padding: 14px 28px;
@@ -95,7 +93,6 @@
         background: #1e40af;
       }
 
-      /* RESULT CARD */
       .result {
         margin-top: 25px;
         width: 60%;
@@ -104,6 +101,8 @@
         border-radius: 18px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
         font-size: 18px;
+        text-align: left;
+        line-height: 1.6;
       }
     </style>
   </head>
@@ -125,32 +124,41 @@
         placeholder="Example: Find the shortest path in a weighted graph"
       ></textarea>
 
-      <br />
-
-      <button onclick="askAI()">Recommend Algorithm</button>
+      <button onclick="getAIRecommendation()">Recommend Algorithm</button>
 
       <div class="result" id="result">AI response will appear here</div>
     </div>
 
     <script>
-      async function askAI() {
-        let question = document.getElementById("question").value;
+      async function getAIRecommendation() {
+        const question = document.getElementById("question").value;
 
-        document.getElementById("result").innerText = "Thinking...";
+        if (!question.trim()) {
+          alert("Please enter a question!");
+          return;
+        }
 
-        const response = await fetch("http://127.0.0.1:5000/ask", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            question: question,
-          }),
-        });
+        document.getElementById("result").innerText = "Thinking... 🤖";
 
-        const data = await response.json();
+        try {
+          const res = await fetch("https://dsa-ai-backend.onrender.com/ask", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ question }),
+          });
 
-        document.getElementById("result").innerText = data.answer;
+          const data = await res.json();
+
+          document.getElementById("result").innerHTML = data.answer.replace(
+            /\n/g,
+            "<br>",
+          );
+        } catch (error) {
+          document.getElementById("result").innerText =
+            "Error connecting to AI 😢";
+        }
       }
     </script>
   </body>
