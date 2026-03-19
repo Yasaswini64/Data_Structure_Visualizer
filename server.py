@@ -4,68 +4,67 @@ from flask_cors import CORS
 import os
 from dotenv import load_dotenv
 
-
-
-
-
-
-
-
-
-
-
 # 🔥 Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
-# ✅ Get API key from .env (NOT hardcoded)
+# 🔑 Get API key
 api_key = os.getenv("COHERE_API_KEY")
 
+if not api_key:
+    raise ValueError("❌ COHERE_API_KEY not found in environment variables")
+
 co = cohere.Client(api_key)
+
+# ✅ Home route (important for Render)
 @app.route("/")
 def home():
     return "Backend is running 🚀"
 
-
+# ✅ AI Route
 @app.route("/ask", methods=["POST"])
-
 def ask():
+    try:
+        data = request.json
 
-    data = request.json
-    print("Question received:", data)   # DEBUG
+        if not data or "question" not in data:
+            return jsonify({"error": "No question provided"}), 400
 
-    question = data["question"]
+        question = data["question"]
 
-    response = co.chat(
-        model="command-a-03-2025",
-        message=f"""
+        response = co.chat(
+            model="command-a-03-2025",
+            message=f"""
 You are a Data Structures and Algorithms expert.
 
 For the given problem:
-1. Identify the most suitable algorithm to solve it.
-2. Provide its time and space complexity.
-3. Give a short reason.
+1. Identify the most suitable algorithm.
+2. Provide time complexity.
+3. Provide space complexity.
+4. Give a short reason.
 
 Return ONLY in this format:
 
-Algorithm: <algorithm name>
+Algorithm: <name>
 
-Time Complexity: <time complexity>
+Time Complexity: <time>
 
-Space Complexity: <space complexity>
+Space Complexity: <space>
 
-Reason: <one short sentence explaining why this algorithm is suitable>
+Reason: <short reason>
 
 Problem: {question}
 """
-    )
+        )
 
-    print("AI response:", response.text)   # DEBUG
+        return jsonify({"answer": response.text})
 
-    return jsonify({"answer": response.text})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
+# 🚀 Run locally (Render uses gunicorn, so this is optional)
 if __name__ == "__main__":
-    app.run(port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000)
