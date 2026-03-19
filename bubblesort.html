@@ -258,6 +258,8 @@
       scene.add(group);
 
       /* ROTATION KEPT */
+      let swappedInPass = false;
+      let totalSwaps = 0;
       let mouseDown = false,
         lastX = 0,
         lastY = 0,
@@ -361,27 +363,28 @@
       }
 
       function swap(a, b) {
-        // swap values
         [array[a], array[b]] = [array[b], array[a]];
-
-        // swap bars
         [bars[a], bars[b]] = [bars[b], bars[a]];
 
-        // swap positions (bars)
         const tempX = bars[a].position.x;
         bars[a].position.x = bars[b].position.x;
         bars[b].position.x = tempX;
 
-        // ✅ MOVE LABELS ALSO
         const labelA = bars[a].userData.label;
         const labelB = bars[b].userData.label;
 
         const tempLX = labelA.position.x;
         labelA.position.x = labelB.position.x;
         labelB.position.x = tempLX;
+
+        // ✅ TRACK SWAPS
+        swappedInPass = true;
+        totalSwaps++;
       }
 
       function generate() {
+        swappedInPass = false;
+        totalSwaps = 0;
         running = false;
 
         const raw = document
@@ -439,14 +442,37 @@
         document.getElementById("resetBtn").disabled = true;
         document.getElementById("generateBtn").disabled = false;
       }
+      function showResult() {
+        let message = "";
+
+        let timeComplexity = "";
+
+        if (totalSwaps === 0) {
+          timeComplexity = "O(n) (Best Case)";
+        } else {
+          timeComplexity = "O(n²)";
+        }
+
+        message += "Sorting Completed!\n";
+        message += `Sorted Array: ${array.join(", ")}\n`;
+
+        message += `\nTime Complexity: ${timeComplexity}`;
+        message += `\nSpace Complexity: O(1)`;
+
+        alert(message);
+      }
       function step() {
         if (i >= array.length - 1) {
-          // ✅ ALL SORTED → make everything green
           bars.forEach((bar) => bar.material.color.set(0x00cc66));
 
           running = false;
           stopProcessingText();
+
           document.getElementById("status").innerText = "Sorting Completed!";
+
+          // ✅ SHOW ALERT
+          setTimeout(() => showResult(), 300);
+
           return;
         }
 

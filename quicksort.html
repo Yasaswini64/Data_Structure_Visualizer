@@ -299,6 +299,7 @@
       });
 
       /* ---------- DATA ---------- */
+      let initiallySorted = false;
       let array = [],
         bars = [],
         labels = [];
@@ -421,6 +422,24 @@
       }
 
       /* ---------- STEP APPLY ---------- */
+      function showResult() {
+        let message = "";
+
+        let timeComplexity = initiallySorted
+          ? "O(n log n) (Best Case)"
+          : "O(n log n)";
+
+        message += "Sorting Completed!\n";
+
+        // ✅ correct sorted array
+        const sortedArray = [...array].sort((a, b) => a - b);
+        message += `Sorted Array: ${sortedArray.join(", ")}\n`;
+
+        message += `\nTime Complexity: ${timeComplexity}`;
+        message += `\nSpace Complexity: O(log n)`;
+
+        alert(message);
+      }
       function applyStep() {
         bars.forEach((b) => b.material.color.set(0x0077ff));
 
@@ -432,8 +451,12 @@
           document.getElementById("status").innerText = "Sorting Completed";
 
           running = false;
-          stopProcessingText(); // 🔥 important
+          stopProcessingText();
           updateComplexity("completed");
+
+          // ✅ SHOW ALERT
+          setTimeout(() => showResult(), 300);
+
           return;
         }
 
@@ -474,6 +497,36 @@
       }
 
       /* ---------- CONTROLS ---------- */
+      function showResult() {
+        let message = "";
+
+        let timeComplexity = initiallySorted
+          ? "O(n log n) (Best Case)"
+          : "O(n log n)";
+
+        message += "Sorting Completed!\n";
+        message += `Sorted Array: ${bars.map((b) => (b.userData.label.material.map ? "" : "")).length ? "" : ""}`;
+
+        // better way:
+        const sorted = bars.map((b) =>
+          b.userData.label ? b.userData.label : null,
+        );
+
+        message = "Sorting Completed!\n";
+        message += `Sorted Array: ${bars.map((b) => (b.userData.label ? "" : ""))}`;
+
+        // ✅ Correct way (use original array sorted)
+        message = "Sorting Completed!\n";
+        message += `Sorted Array: ${array
+          .slice()
+          .sort((a, b) => a - b)
+          .join(", ")}`;
+
+        message += `\nTime Complexity: ${timeComplexity}`;
+        message += `\nSpace Complexity: O(log n)`;
+
+        alert(message);
+      }
       function generate() {
         running = false;
         stepIndex = 0;
@@ -495,7 +548,9 @@
         }
 
         array = raw;
-
+        initiallySorted =
+          array.length <= 1 ||
+          array.every((v, i) => i === 0 || array[i] >= array[i - 1]);
         createBars();
         buildSteps([...array], 0, array.length - 1);
 

@@ -499,9 +499,14 @@
         if (left > right) {
           highlight("l9");
           document.getElementById("status").innerText = "Not Found → return -1";
+
           updateComplexity("notfound");
           running = false;
           stopProcessingText();
+
+          // ✅ ALERT
+          setTimeout(() => showResult(false, -1, iterCount), 300);
+
           return;
         }
 
@@ -524,10 +529,15 @@
         } else if (phase === 3) {
           highlight("l4");
           boxes[mid].material.color.set(0x00cc66);
+
           document.getElementById("status").innerText = "Found at index " + mid;
+
           updateComplexity("found", iterCount);
           running = false;
           stopProcessingText();
+
+          // ✅ ALERT
+          setTimeout(() => showResult(true, mid, iterCount), 300);
         } else if (phase === 5) {
           highlight("l5");
           phase = 6;
@@ -543,6 +553,29 @@
           right = mid - 1;
           phase = 0;
         }
+      }
+      function showResult(found, index, iterations) {
+        let message = "";
+
+        let timeComplexity = "";
+
+        if (found) {
+          message += `Element FOUND at index: ${index}\n`;
+
+          if (iterations === 1) {
+            timeComplexity = "O(1) (Best Case)";
+          } else {
+            timeComplexity = "O(log n)";
+          }
+        } else {
+          message += `Element NOT FOUND\n`;
+          timeComplexity = "O(log n)";
+        }
+
+        message += `\nTime Complexity: ${timeComplexity}`;
+        message += `\nSpace Complexity: O(1)`;
+
+        alert(message);
       }
 
       /* ---------- CONTROLS ---------- */

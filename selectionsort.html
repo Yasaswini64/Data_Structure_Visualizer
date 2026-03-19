@@ -457,8 +457,12 @@
           bars.forEach((b) => b.material.color.set(0x00cc66));
 
           running = false;
-          stopProcessingText(); // 🔥 important
+          stopProcessingText();
           updateComplexity("completed");
+
+          // ✅ SHOW ALERT
+          setTimeout(() => showResult(), 300);
+
           return;
         }
 
@@ -543,6 +547,17 @@
         document.getElementById("pauseBtn").disabled = true;
         document.getElementById("resetBtn").disabled = true;
         document.getElementById("generateBtn").disabled = false;
+      }
+      function showResult() {
+        let message = "";
+
+        message += "Sorting Completed!\n";
+        message += `Sorted Array: ${array.join(", ")}\n`;
+
+        message += `\nTime Complexity: O(n²)`;
+        message += `\nSpace Complexity: O(1)`;
+
+        alert(message);
       }
 
       /* ---------- LOOP ---------- */

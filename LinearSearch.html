@@ -439,6 +439,31 @@
         document.getElementById("resetBtn").disabled = false;
         document.querySelector("button[onclick='generate()']").disabled = true;
       }
+      function showResult(found, index) {
+        let message = "";
+
+        let timeComplexity = "";
+
+        if (found) {
+          message += `Element FOUND at index: ${index}\n`;
+
+          if (index === 0) {
+            timeComplexity = "O(1) (Best Case)";
+          } else if (index === array.length - 1) {
+            timeComplexity = "O(n) (Worst Case)";
+          } else {
+            timeComplexity = "O(n) (Average Case)";
+          }
+        } else {
+          message += `Element NOT FOUND\n`;
+          timeComplexity = "O(n) (Worst Case)";
+        }
+
+        message += `\nTime Complexity: ${timeComplexity}`;
+        message += `\nSpace Complexity: O(1)`;
+
+        alert(message);
+      }
       function step() {
         highlight("l1");
 
@@ -452,11 +477,17 @@
           if (boxes[index].userData.value === target) {
             highlight("l3");
             boxes[index].material.color.set(0x00cc66);
+
             document.getElementById("status").innerText =
               `Found ${target} at index ${index}`;
+
             updateComplexity("found", index);
             running = false;
-            stopProcessingText(); // 🔥 ADD
+            stopProcessingText();
+
+            // ✅ SHOW ALERT
+            setTimeout(() => showResult(true, index), 300);
+
             return;
           }
           index++;
@@ -466,6 +497,9 @@
           updateComplexity("notfound");
           running = false;
           stopProcessingText();
+
+          // ✅ SHOW ALERT
+          setTimeout(() => showResult(false, -1), 300);
         }
       }
       function start() {
