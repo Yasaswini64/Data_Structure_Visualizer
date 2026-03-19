@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # 🔑 Get API key
 api_key = os.getenv("COHERE_API_KEY")
@@ -23,6 +23,12 @@ co = cohere.Client(api_key)
 def home():
     return "Backend is running 🚀"
 
+@app.after_request
+def after_request(response):
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
+    response.headers.add("Access-Control-Allow-Methods", "GET,POST,OPTIONS")
+    return response
 # ✅ AI Route
 @app.route("/ask", methods=["POST"])
 def ask():
