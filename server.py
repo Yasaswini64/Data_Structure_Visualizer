@@ -4,6 +4,16 @@ from flask_cors import CORS
 import os
 from dotenv import load_dotenv
 
+
+
+
+
+
+
+
+
+
+
 # 🔥 Load environment variables
 load_dotenv()
 
@@ -14,8 +24,13 @@ CORS(app)
 api_key = os.getenv("COHERE_API_KEY")
 
 co = cohere.Client(api_key)
+@app.route("/")
+def home():
+    return "Backend is running 🚀"
+
 
 @app.route("/ask", methods=["POST"])
+
 def ask():
 
     data = request.json
