@@ -2,49 +2,66 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Merge Sort – Divide & Conquer Tree</title>
+    <title>Merge Sort Visualization</title>
 
     <style>
       body {
         margin: 0;
-        background: radial-gradient(circle at top, #1a1a1a, #000);
-        font-family: "Segoe UI", sans-serif;
         overflow: hidden;
+        background: #ffffff;
+        font-family: "Segoe UI", sans-serif;
+        color: #000;
       }
 
+      /* BACK BUTTON */
       .back-btn {
         position: fixed;
-        top: 16px;
-        left: 16px;
+        top: 18px;
+        left: 18px;
         font-size: 32px;
-        color: #00eaff;
+        color: #0077ff;
         text-decoration: none;
-        font-weight: 700;
-        z-index: 200;
+        font-weight: bold;
+        z-index: 100;
       }
 
+      /* HEADER */
       header {
-        position: absolute;
+        position: fixed;
         top: 0;
         width: 100%;
-        text-align: center;
-        padding: 14px;
-        font-size: 26px;
-        font-weight: 700;
-        color: #00eaff;
-        background: rgba(0, 0, 0, 0.5);
+        height: 90px;
+        background: #f5f7fa;
+        border-bottom: 1px solid #ddd;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 50;
+      }
+      header .title {
+        font-size: 28px;
+        color: #0077ff;
+        font-weight: bold;
+      }
+      header .subtitle {
+        font-size: 14px;
+        color: #555;
       }
 
+      /* PANEL */
       #panel {
-        position: absolute;
-        top: 80px;
+        position: fixed;
+        top: 120px;
         left: 20px;
-        width: 260px;
-        background: rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(10px);
+        width: 270px;
+        background: #ffffff;
         border-radius: 14px;
         padding: 16px;
-        color: #fff;
+        color: #000;
+        border: 1px solid #ddd;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        z-index: 40;
       }
 
       input,
@@ -53,59 +70,127 @@
         margin-top: 8px;
         padding: 8px;
         border-radius: 8px;
-        border: none;
+        border: 1px solid #ccc;
       }
 
       input {
-        background: rgba(0, 0, 0, 0.6);
-        color: #00eaff;
+        background: #f9f9f9;
+        color: #000;
       }
+
       button {
-        background: linear-gradient(135deg, #00eaff, #0077ff);
+        background: linear-gradient(135deg, #0077ff, #00aaff);
+        color: #fff;
         font-weight: bold;
         cursor: pointer;
       }
 
       #status {
         margin-top: 12px;
+        padding: 8px;
         text-align: center;
-        color: #00eaff;
+        background: #f1f3f6;
+        color: #0077ff;
+        border-radius: 8px;
+        font-weight: bold;
       }
 
+      /* CODE PANEL */
       #code {
         margin-top: 14px;
-        background: #fff;
+        background: #f8f9fc;
         color: #000;
         border-radius: 10px;
         padding: 10px;
         font-family: Consolas, monospace;
-        font-size: 13px;
+        border: 1px solid #ddd;
       }
-      #code div {
-        padding: 4px 6px;
-        border-radius: 6px;
-      }
+
       .active {
         background: #cceeff;
         font-weight: bold;
       }
+      .flash-card {
+        position: fixed;
+        top: 140px;
+        left: 380px;
+        right: 60px;
+        bottom: 60px;
+        background: #fff;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        z-index: 5;
+      }
+
+      button:disabled {
+        background: #ccc;
+        color: #666;
+        cursor: not-allowed;
+        opacity: 0.7;
+      }
+
+      /* Complexity box */
+      #complexity {
+        background: #ffffff;
+        color: #000;
+        padding: 10px;
+        border-radius: 10px;
+        z-index: 100;
+        font-family: Consolas, monospace;
+        font-size: 13px;
+        min-width: 220px;
+        border: 1px solid #ddd;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        position: absolute;
+        bottom: 16px;
+        right: 16px;
+        z-index: 20;
+      }
+
+      #complexity table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      #complexity th {
+        text-align: left;
+        padding-bottom: 6px;
+        color: #0077ff;
+      }
+
+      #complexity td {
+        padding: 6px 8px;
+      }
+
+      #complexity .active {
+        background: #e6f7ff;
+        color: #0077ff;
+        font-weight: 700;
+        border-radius: 4px;
+      }
 
       canvas {
-        display: block;
+        position: absolute;
       }
     </style>
   </head>
 
   <body>
     <a href="index.html" class="back-btn">←</a>
-    <header>MERGE SORT – DIVIDE → MERGE (TREE VIEW)</header>
+    <header>
+      <div class="title">Merge Sort</div>
+    </header>
 
     <div id="panel">
       <input id="arrayInput" value="38,27,43,3,9,82,10" />
+
       <button onclick="start()">▶ Start</button>
-      <button onclick="togglePause()">⏸ Pause</button>
+      <button onclick="pause()">⏸ Pause</button>
       <button onclick="reset()">🔄 Reset</button>
-      <input id="speed" type="range" min="300" max="1600" value="800" />
+      <input id="speed" type="range" min="300" max="1500" value="800" />
+
       <div id="status">Ready</div>
 
       <div id="code">
@@ -114,35 +199,63 @@
         <div id="p3">split array</div>
         <div id="p4">mergeSort(left)</div>
         <div id="p5">mergeSort(right)</div>
-        <div id="p6">merge(left, right)</div>
+        <div id="p6">merge(left,right)</div>
       </div>
     </div>
 
-    <canvas id="canvas"></canvas>
+    <div class="flash-card" id="card">
+      <canvas id="canvas"></canvas>
+
+      <div id="complexity">
+        <table>
+          <tr>
+            <th>Metric</th>
+            <th>Value</th>
+          </tr>
+          <tr>
+            <td>Time</td>
+            <td>O(n log n)</td>
+          </tr>
+          <tr>
+            <td>Space</td>
+            <td>O(n)</td>
+          </tr>
+        </table>
+      </div>
+    </div>
 
     <script>
       const canvas = document.getElementById("canvas");
       const ctx = canvas.getContext("2d");
       function resize() {
-        canvas.width = innerWidth;
-        canvas.height = innerHeight;
+        const card = document.getElementById("card");
+
+        const ratio = window.devicePixelRatio || 1;
+
+        canvas.width = card.clientWidth * ratio;
+        canvas.height = card.clientHeight * ratio;
+
+        canvas.style.width = card.clientWidth + "px";
+        canvas.style.height = card.clientHeight + "px";
+
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
       }
       resize();
-      addEventListener("resize", resize);
+      window.addEventListener("resize", resize);
 
-      /* DRAW HELPERS */
-      function box(x, y, t, c) {
-        ctx.fillStyle = c;
-        ctx.strokeStyle = "#fff";
-        ctx.lineWidth = 1.5;
-        ctx.fillRect(x - 26, y - 18, 52, 36);
-        ctx.strokeRect(x - 26, y - 18, 52, 36);
-        ctx.fillStyle = "#fff";
-        ctx.font = "bold 18px Arial";
+      /* DRAW */
+      function box(x, y, text, color) {
+        ctx.fillStyle = color;
+        ctx.fillRect(x - 30, y - 22, 60, 44);
+        ctx.strokeRect(x - 30, y - 22, 60, 44);
+
+        ctx.fillStyle = "#000";
+        ctx.font = "bold 18px Arial"; // ✅ clearer text
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(t, x, y);
+        ctx.fillText(text, x, y);
       }
+
       function line(x1, y1, x2, y2) {
         ctx.strokeStyle = "#aaa";
         ctx.beginPath();
@@ -151,7 +264,7 @@
         ctx.stroke();
       }
 
-      /* CODE HIGHLIGHT */
+      /* HIGHLIGHT */
       function hl(id) {
         ["p1", "p2", "p3", "p4", "p5", "p6"].forEach((x) => {
           document.getElementById(x).classList.remove("active");
@@ -159,16 +272,18 @@
         if (id) document.getElementById(id).classList.add("active");
       }
 
-      /* STEPS */
-      let steps = [],
-        idx = 0,
-        timer = null,
-        paused = false;
+      /* DATA */
+      let steps = [];
+      let drawings = [];
+      let idx = 0;
+      let timer = null;
+      let running = false;
+      let finalArray = [];
 
-      /* CORE FIXED MERGE SORT */
+      /* MERGE SORT */
       function mergeSort(arr, x, y, level) {
         steps.push({ t: "code", l: "p1" });
-        steps.push({ t: "draw", arr: [...arr], x, y, c: "#0077ff" });
+        steps.push({ t: "draw", arr: [...arr], x, y, color: "#0077ff" });
 
         if (arr.length <= 1) {
           steps.push({ t: "code", l: "p2" });
@@ -177,19 +292,18 @@
 
         steps.push({ t: "code", l: "p3" });
         const mid = Math.floor(arr.length / 2);
-        const gap = 260 / (level + 1);
 
-        const leftX = x - gap,
-          rightX = x + gap;
-        const childY = y + 90;
+        const gap = Math.max(160 / (level + 1), 60);
+        const leftX = x - gap;
+        const rightX = x + gap;
+        const newY = y + 80;
 
-        // 🔥 VISUAL SPLIT
         steps.push({
           t: "draw",
           arr: arr.slice(0, mid),
           x: leftX,
-          y: childY,
-          c: "#3399ff",
+          y: newY,
+          color: "#66a3ff",
           px: x,
           py: y,
         });
@@ -197,75 +311,117 @@
           t: "draw",
           arr: arr.slice(mid),
           x: rightX,
-          y: childY,
-          c: "#3399ff",
+          y: newY,
+          color: "#66a3ff",
           px: x,
           py: y,
         });
 
         steps.push({ t: "code", l: "p4" });
-        const L = mergeSort(arr.slice(0, mid), leftX, childY, level + 1);
+        const L = mergeSort(arr.slice(0, mid), leftX, newY, level + 1);
 
         steps.push({ t: "code", l: "p5" });
-        const R = mergeSort(arr.slice(mid), rightX, childY, level + 1);
+        const R = mergeSort(arr.slice(mid), rightX, newY, level + 1);
 
         steps.push({ t: "code", l: "p6" });
-        const M = [];
+
+        const merged = [];
         let i = 0,
           j = 0;
         while (i < L.length && j < R.length)
-          M.push(L[i] <= R[j] ? L[i++] : R[j++]);
-        while (i < L.length) M.push(L[i++]);
-        while (j < R.length) M.push(R[j++]);
+          merged.push(L[i] <= R[j] ? L[i++] : R[j++]);
+        while (i < L.length) merged.push(L[i++]);
+        while (j < R.length) merged.push(R[j++]);
 
-        steps.push({ t: "draw", arr: M, x, y, c: "#00ff88" });
-        return M;
+        steps.push({ t: "draw", arr: merged, x, y, color: "#00cc66" });
+        return merged;
+      }
+
+      /* RESULT CARD */
+      function showResultCard(message) {
+        let existing = document.getElementById("resultCard");
+        if (existing) existing.remove();
+
+        const div = document.createElement("div");
+        div.id = "resultCard";
+
+        div.innerHTML = `
+    <div style="font-size:18px;margin-bottom:8px;">${message}</div>
+    <div style="font-size:14px;color:#333;">
+      Time Complexity: <b>O(n log n)</b><br>
+      Space Complexity: <b>O(n)</b>
+    </div>
+  `;
+
+        document.getElementById("card").appendChild(div);
       }
 
       /* RENDER */
       function render() {
-        if (paused) return;
+        if (!running) return;
+
         if (idx >= steps.length) {
-          status.innerText = "Sorting Complete";
-          clearInterval(timer);
+          running = false;
+          status.innerText = "Completed";
+
+          showResultCard(`Sorted Array: [${finalArray.join(", ")}]`);
           return;
         }
+
         const s = steps[idx++];
+
         if (s.t === "code") {
           hl(s.l);
           return;
         }
-        if (s.px !== undefined) line(s.px, s.py + 20, s.x, s.y - 20);
-        const sp = 60,
-          sx = s.x - ((s.arr.length - 1) * sp) / 2;
-        s.arr.forEach((v, i) => box(sx + i * sp, s.y, v, s.c));
+
+        drawings.push(s);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        drawings.forEach((d) => {
+          if (d.px) line(d.px, d.py + 20, d.x, d.y - 20);
+
+          const spacing = 80;
+          const startX = Math.round(d.x - ((d.arr.length - 1) * spacing) / 2);
+
+          d.arr.forEach((v, i) => {
+            box(startX + i * spacing, d.y, v, d.color);
+          });
+        });
       }
 
       /* CONTROLS */
       function start() {
         reset();
-        const arr = arrayInput.value
-          .split(",")
-          .map(Number)
-          .filter((n) => !isNaN(n));
-        if (!arr.length) return;
-        status.innerText = "Sorting...";
-        mergeSort(arr, canvas.width / 2, 140, 0);
+
+        const arr = arrayInput.value.split(",").map(Number);
+        const centerX = canvas.clientWidth / 2;
+        finalArray = mergeSort(arr, centerX, 80, 0);
+
+        running = true;
+        status.innerText = "Processing..."; // ✅ FIX
         timer = setInterval(render, speed.value);
       }
-      function togglePause() {
-        paused = !paused;
-        status.innerText = paused ? "Paused" : "Sorting...";
+
+      function pause() {
+        running = !running;
+        status.innerText = running ? "Processing..." : "Paused";
       }
+
       function reset() {
         clearInterval(timer);
         timer = null;
-        paused = false;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
         steps = [];
+        drawings = [];
         idx = 0;
+        running = false;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         hl(null);
         status.innerText = "Ready";
+
+        const existing = document.getElementById("resultCard");
+        if (existing) existing.remove();
       }
     </script>
   </body>
